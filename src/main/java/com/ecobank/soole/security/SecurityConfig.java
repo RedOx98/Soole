@@ -19,7 +19,6 @@ import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 import com.nimbusds.jose.JOSEException;
-import com.nimbusds.jose.jwk.JWKSelector;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.JWKSource;
@@ -80,11 +79,13 @@ public class SecurityConfig {
             .requestMatchers("/api/v1/auth/token").permitAll()
             .requestMatchers("/api/v1/auth/test").hasAuthority("SCOPE_ADMIN")
             .requestMatchers("/api/v1/auth/users").hasAuthority("SCOPE_ADMIN")
+            .requestMatchers("/api/v1/auth/userspaginate").hasAuthority("SCOPE_ADMIN")
             .requestMatchers("/api/v1/auth/users/add").permitAll()
             .requestMatchers("/api/v1/auth/profile").authenticated()
             .requestMatchers("/api/v1/auth/profile/delete").authenticated()
             .requestMatchers("/api/v1/auth/profile/update-password").authenticated()
-            .requestMatchers("/api/v1/auth/users/{userId}/update-authorities").authenticated()
+            .requestMatchers("/api/v1/auth/users/{userId}/update-authorities").hasAuthority("SCOPE_ADMIN")
+            .requestMatchers("/api/v1/auth/users/{userId}/update-verified").hasAuthority("SCOPE_ADMIN")
             .requestMatchers("/swagger-ui/**").permitAll()
             .requestMatchers("/v3/api-docs/**").permitAll()
 

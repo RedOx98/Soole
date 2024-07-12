@@ -7,12 +7,17 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
 @Getter
 @Setter
+// @Table(name = "account")
 public class Account {
     
     @Id
@@ -37,4 +42,17 @@ public class Account {
     private String lastName;
 
     private String username;
+
+    private String verified;
+
+    private String route;
+
+    @ManyToOne
+    @JoinColumn(name = "bus_id", referencedColumnName = "id", nullable = true)
+    private Bus bus;
+
+    public String getFullName() {
+        return firstName + " " + lastName;
+    }
+
 }

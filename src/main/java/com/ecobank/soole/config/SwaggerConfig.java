@@ -10,7 +10,7 @@ import io.swagger.v3.oas.annotations.info.License;
 @Configuration
 @OpenAPIDefinition(
     info = @Info(
-            title = "Soole API",
+            title = "Kiti API",
             version = "Version 1.2",
             contact = @Contact(
                 name = "Olahammed", email = "olahammed@ecobank.com", url = "https://olahammed.ecobank.org"

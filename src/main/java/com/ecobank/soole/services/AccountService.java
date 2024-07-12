@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -16,7 +19,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.ecobank.soole.models.Account;
+import com.ecobank.soole.models.Bus;
 import com.ecobank.soole.repositories.AccountRepository;
+import com.ecobank.soole.repositories.BusRepository;
 import com.ecobank.soole.util.constants.Authority;
 
 @Service
@@ -28,6 +33,9 @@ public class AccountService implements UserDetailsService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private BusRepository busRepository;
+
     public Account save(Account account){
 
         account.setPassword_hash(passwordEncoder.encode(account.getPassword_hash()));
@@ -37,7 +45,45 @@ public class AccountService implements UserDetailsService {
         if (account.getAuthorities() == null) {
             account.setAuthorities(Authority.USER.toString());
         }
+        if (account.getVerified() == null) {
+            account.setVerified("true");
+        }
+        if (account.getCreatedAt() == null) {
+            account.setCreatedAt(LocalDateTime.now());
+        }
+        
         return accountRepository.save(account);
+    }
+
+    public Account mapToBus(Account account, Long busId){
+
+        account.setPassword_hash(passwordEncoder.encode(account.getPassword_hash()));
+        if (account.getId() == null) {
+            account.setCreatedAt(LocalDateTime.now());
+        }
+        if (account.getAuthorities() == null) {
+            account.setAuthorities(Authority.USER.toString());
+        }
+        if (account.getVerified() == null) {
+            account.setVerified("true");
+        }
+        if (account.getCreatedAt() == null) {
+            account.setCreatedAt(LocalDateTime.now());
+        }
+
+        Optional<Bus> optionalBus = busRepository.findById(busId);
+        if (optionalBus.isPresent()) {
+            Bus bus = optionalBus.get();
+            account.setBus(bus);
+        }else{
+            throw new RuntimeException();
+        }
+
+        return accountRepository.save(account);
+    }
+
+    public Page<Account> findAccounts(int offset, int pageSize, String field){
+        return accountRepository.findAll(PageRequest.of(offset, pageSize).withSort(Direction.ASC, field));
     }
 
     public List<Account> findAll(){
