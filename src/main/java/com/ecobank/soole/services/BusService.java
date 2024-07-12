@@ -3,23 +3,30 @@ package com.ecobank.soole.services;
 import java.util.Map;
 import java.util.Optional;
 
-import org.springframework.data.domain.Page;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.ecobank.soole.models.Bus;
-import com.ecobank.soole.payload.bus.BusFetchRequestDTO;
-import com.ecobank.soole.payload.bus.CreateBusDTO;
-import com.ecobank.soole.payload.bus.CreateRouteDTO;
+import com.ecobank.soole.repositories.BusRepository;
 
-public interface BusService {
-    void createBus(CreateBusDTO createBusDTO);
+@Service
+public class BusService {
+    @Autowired
+    private BusRepository busRepository;
 
-    void addRouteDetails(CreateRouteDTO createRouteDTO, String busId);
+    public Bus save(Bus bus){
+        return busRepository.save(bus);
+    }
 
-    Page<Bus> fetchBuses(BusFetchRequestDTO requestDTO);
+    public List<Bus> findAll(){
+        return busRepository.findAll();
+    }
 
-    Optional<Bus> fetchById(Long id);
+    public Optional<Bus> findById(Long id){
+        return busRepository.findById(id);
+    }
 
-    void deleteBus(String busId);
-
-    void updateBusDetails(String busId, Map<String, Object> updateData);
+    // public List<Bus> findByAccount_id(Long id){
+    //     return busRepository.findByAccount_id(id);
+    // }
 }
