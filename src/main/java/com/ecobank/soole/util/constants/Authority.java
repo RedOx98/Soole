@@ -4,5 +4,6 @@ public enum Authority {
     CAPTAIN,
     ADMIN,
     USER,
-    SUPERUSER
+    SUPERUSER,
+    DRIVER
 }
