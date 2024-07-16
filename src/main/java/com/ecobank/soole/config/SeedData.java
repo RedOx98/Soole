@@ -98,6 +98,11 @@ public class SeedData implements CommandLineRunner {
         account01.setLastName("hammed");
         account01.setUsername("olahammed");
         account01.setRoute("IKORODU");
+        account01.setDepartment("Technology");
+        account01.setAffiliate("ENG");
+        account01.setStaff_id("10928");
+        account01.setStatus("activated");
+        account01.setVerified("approved");
         accountService.mapToBus(account01, bus01.getId());
 
         account02.setEmail("olahammed@ecobank.com");
@@ -109,6 +114,11 @@ public class SeedData implements CommandLineRunner {
         account02.setUsername("olahammed");
         account02.setAuthorities(Authority.ADMIN.toString());
         account02.setRoute("KETU");
+        account02.setDepartment("Technology");
+        account02.setAffiliate("ENG");
+        account02.setStaff_id("10928");
+        account02.setStatus("activated");
+        account02.setVerified("pending");
         accountService.mapToBus(account02, bus02.getId());
 
         account03.setEmail("tvincent@ecobank.com");
@@ -120,6 +130,11 @@ public class SeedData implements CommandLineRunner {
         account03.setUsername("Tosmic");
         account03.setAuthorities(Authority.CAPTAIN.toString());
         account03.setRoute("OJOTA");
+        account03.setDepartment("Technology");
+        account03.setAffiliate("ENG");
+        account03.setStaff_id("11915");
+        account03.setStatus("pending");
+        account03.setVerified("approved");
         accountService.mapToBus(account03, bus03.getId());
 
         account04.setEmail("emmanuel@ecobank.com");
@@ -131,6 +146,11 @@ public class SeedData implements CommandLineRunner {
         account04.setUsername("Onyeemmanuel");
         account04.setAuthorities(Authority.SUPERUSER.toString());
         account04.setRoute("BERGER");
+        account04.setDepartment("Technology");
+        account04.setAffiliate("ENG");
+        account04.setStaff_id("12928");
+        account04.setStatus("activated");
+        account04.setVerified("pending");
         accountService.mapToBus(account04, bus01.getId());
 
         account05.setEmail("micheal@ecobank.com");
@@ -142,6 +162,11 @@ public class SeedData implements CommandLineRunner {
         account05.setUsername("micheali");
         account05.setAuthorities(Authority.DRIVER.toString());
         account05.setRoute("SANGO");
+        account05.setDepartment("Technology");
+        account05.setAffiliate("ENG");
+        account05.setStaff_id("13928");
+        account05.setStatus("deactivated");
+        account05.setVerified("rejected");
         accountService.mapToBus(account05, bus05.getId());
 
     }

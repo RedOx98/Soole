@@ -94,8 +94,20 @@ public class AccountService implements UserDetailsService {
         return accountRepository.findByEmail(email);
     }
 
+    public List<Account> findByAuthorities(String authority){
+        return accountRepository.findByAuthorities(authority);
+    }
+
+    public List<Account> findByVerified(String status){
+        return accountRepository.findByVerified(status);
+    }
+
     public Optional<Account> findById(Long id){
         return accountRepository.findById(id);
+    }
+
+    public Optional<Account> findByToken(String token){
+        return accountRepository.findByToken(token);
     }
 
     public void deleteById(Long id){

@@ -14,7 +14,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class AccountDTO {
+public class UpdateAccountPayloadDTO {
 
     @Email
     @Schema(description = "Email address", example = "example@gmail.com", requiredMode = RequiredMode.REQUIRED)
@@ -51,6 +51,9 @@ public class AccountDTO {
 
     @NotBlank
     private String affiliate;
+
+    @NotBlank
+    private String status;
 
     @NotBlank
     @Size(min = 5, max = 7)
