@@ -10,16 +10,16 @@ import io.swagger.v3.oas.annotations.info.License;
 @Configuration
 @OpenAPIDefinition(
     info = @Info(
-            title = "Kiti API",
+            title = "Soole API",
             version = "Version 1.2",
             contact = @Contact(
-                name = "Olahammed", email = "olahammed@ecobank.com", url = "https://olahammed.ecobank.org"
+                name = "Innovations", email = "olahammed@ecobank.com", url = "https://olahammed.ecobank.org"
             ),
             license = @License(
                 name = "Apache 2.0", url = "https://www.apache.org/licenses/LICENSE-2.0"
             ),
             termsOfService = "https://ecobank.com/TOS",
-            description = "Spring Boot Restful API demo by innovations team"
+            description = "Spring Boot Restful API demo by innovations team with me Olaide Hammed is Onyejeme Emmanuel"
         )
 )
 public class SwaggerConfig {
