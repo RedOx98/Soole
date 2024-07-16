@@ -1,8 +1,10 @@
 package com.ecobank.soole.controller;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -30,9 +32,15 @@ import com.ecobank.soole.payload.auth.AccountDTO;
 import com.ecobank.soole.payload.auth.AccountVerifiedViewDTO;
 import com.ecobank.soole.payload.auth.AccountViewDTO;
 import com.ecobank.soole.payload.auth.AuthoritiesDTO;
+import com.ecobank.soole.payload.auth.ChangePasswordPayloadDTO;
 import com.ecobank.soole.payload.auth.PasswordDTO;
+import com.ecobank.soole.payload.auth.PasswordResetPayloadDTO;
 import com.ecobank.soole.payload.auth.ProfileDTO;
+import com.ecobank.soole.payload.auth.StatsDTO;
+import com.ecobank.soole.payload.auth.TokenDTO;
 import com.ecobank.soole.payload.auth.TokenViewDTO;
+import com.ecobank.soole.payload.auth.UpdateAccountPayloadDTO;
+import com.ecobank.soole.payload.auth.UpdateAccountViewDTO;
 import com.ecobank.soole.payload.auth.UserLoginDTO;
 import com.ecobank.soole.payload.auth.VerifiedDTO;
 import com.ecobank.soole.services.AccountService;
@@ -41,6 +49,7 @@ import com.ecobank.soole.services.TokenService;
 import com.ecobank.soole.util.constants.AccountError;
 import com.ecobank.soole.util.constants.AccountSuccess;
 import com.ecobank.soole.util.email.EmailDetails;
+import com.ecobank.soole.util.email.EmailDetailsWelcome;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -73,6 +82,9 @@ public class AuthController {
     @Value("${site.domain}")
     private String siteDomain;
 
+    @Value("${password.token.reset..timeout.minutes}")
+    private int passwordTokenTimeout;
+
     @PostMapping("/token")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Login to get token")
@@ -86,13 +98,6 @@ public class AuthController {
 
             Optional<Account> optionalAccount = accountService.findByEmail(userLogin.getEmail());
             Account account = optionalAccount.get();
-            // TokenDTO token = new TokenDTO(tokenService.generateToken(authentication));
-            // result.put(token.toString(), account);
-            String welcomeMessage = "You're welcome to Kiti, access the site on " + siteDomain + "swagger-ui/index.html";
-            EmailDetails details = new EmailDetails(account.getEmail(), welcomeMessage, "Welcome to Kiti");
-            if (emailService.sendMail(details) == false) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-            };
             return ResponseEntity
                     .ok(new TokenViewDTO(tokenService.generateToken(authentication), account.getAuthorities(),
                             account.getLevel(), account.getFirstName(), account.getLastName(), account.getUsername()));
@@ -120,6 +125,11 @@ public class AuthController {
             account.setLastName(accountDTO.getLastName());
             account.setUsername(accountDTO.getUsername());
             accountService.save(account);
+            String welcomeMessage = "Welcome to SOOLE APP";
+                    EmailDetailsWelcome details = new EmailDetailsWelcome(account.getEmail(),welcomeMessage, "Soole just testing", account.getFirstName());
+            if (emailService.sendWelcomeEmail(details)== false) {
+                return new ResponseEntity<>("Error while sending mail, contact admin", HttpStatus.EXPECTATION_FAILED);
+            };
 
             return ResponseEntity.ok(AccountSuccess.ACCOUNT_ADDED.toString());
         } catch (Exception e) {
@@ -139,28 +149,68 @@ public class AuthController {
 
         for (Account users : accountService.findAll()) {
             accounts.add(new AccountViewDTO(users.getId(), users.getEmail(), users.getAuthorities(),
-                    users.getCreatedAt(), users.getLevel(), users.getTelephone()));
+                    users.getCreatedAt(), users.getLevel(), users.getTelephone(), users.getFirstName(),
+                    users.getLastName(), users.getUsername(), users.getVerified(), users.getRoute(),
+                    users.getDepartment(), users.getAffiliate(), users.getStaff_id()));
         }
         return accounts;
     }
 
-    // @GetMapping("/users")
-    // @ApiResponse(responseCode = "200", description = "List of users")
-    // @ApiResponse(responseCode = "401", description = "Token missing")
-    // @ApiResponse(responseCode = "403", description = "Token error")
-    // @Operation(summary = "List user API")
-    // @SecurityRequirement(name = "soole-demo-api")
-    // public List<AccountViewDTO> usersPage() {
+    @GetMapping("/stats")
+    @ApiResponse(responseCode = "200", description = "Statistics")
+    @ApiResponse(responseCode = "401", description = "Token missing")
+    @ApiResponse(responseCode = "403", description = "Token error")
+    @Operation(summary = "Get stats")
+    @SecurityRequirement(name = "soole-demo-api")
+    public StatsDTO stats() {
 
-    // List<AccountViewDTO> accounts = new ArrayList<>();
+        List<AccountViewDTO> accounts = new ArrayList<>();
+        for (Account users : accountService.findAll()) {
+            accounts.add(new AccountViewDTO(users.getId(), users.getEmail(), users.getAuthorities(),
+                    users.getCreatedAt(), users.getLevel(), users.getTelephone(), users.getFirstName(),
+                    users.getLastName(), users.getUsername(), users.getVerified(), users.getRoute(),
+                    users.getDepartment(), users.getAffiliate(), users.getStaff_id()));
+        }
 
-    // for (Account users: accountService.findAll()){
-    // accounts.add(new
-    // AccountViewDTO(users.getId(),users.getEmail(),users.getAuthorities(),
-    // users.getCreatedAt(),users.getLevel(),users.getTelephone()));
-    // }
-    // return accounts;
-    // }
+        List<AccountViewDTO> approved = new ArrayList<>();
+
+        for (Account users : accountService.findByVerified("approved")) {
+            approved.add(new AccountViewDTO(users.getId(), users.getEmail(), users.getAuthorities(),
+                    users.getCreatedAt(), users.getLevel(), users.getTelephone(), users.getFirstName(),
+                    users.getLastName(), users.getUsername(), users.getVerified(), users.getRoute(),
+                    users.getDepartment(), users.getAffiliate(), users.getStaff_id()));
+        }
+
+        List<AccountViewDTO> pending = new ArrayList<>();
+
+        for (Account users : accountService.findByVerified("pending")) {
+            pending.add(new AccountViewDTO(users.getId(), users.getEmail(), users.getAuthorities(),
+                    users.getCreatedAt(), users.getLevel(), users.getTelephone(), users.getFirstName(),
+                    users.getLastName(), users.getUsername(), users.getVerified(), users.getRoute(),
+                    users.getDepartment(), users.getAffiliate(), users.getStaff_id()));
+        }
+
+        List<AccountViewDTO> rejected = new ArrayList<>();
+
+        for (Account users : accountService.findByVerified("rejected")) {
+            rejected.add(new AccountViewDTO(users.getId(), users.getEmail(), users.getAuthorities(),
+                    users.getCreatedAt(), users.getLevel(), users.getTelephone(), users.getFirstName(),
+                    users.getLastName(), users.getUsername(), users.getVerified(), users.getRoute(),
+                    users.getDepartment(), users.getAffiliate(), users.getStaff_id()));
+        }
+
+        List<AccountViewDTO> captains = new ArrayList<>();
+
+        for (Account users : accountService.findByAuthorities("CAPTAIN")) {
+            captains.add(new AccountViewDTO(users.getId(), users.getEmail(), users.getAuthorities(),
+                    users.getCreatedAt(), users.getLevel(), users.getTelephone(), users.getFirstName(),
+                    users.getLastName(), users.getUsername(), users.getVerified(), users.getRoute(),
+                    users.getDepartment(), users.getAffiliate(), users.getStaff_id()));
+        }
+        
+        StatsDTO stats = new StatsDTO(accounts.size(), approved.size(), pending.size(),rejected.size(), captains.size());
+        return stats;
+    }
 
     @GetMapping("/userspaginate")
     @ApiResponse(responseCode = "200", description = "List of users pagination")
@@ -194,7 +244,15 @@ public class AuthController {
                         account.getAuthorities(),
                         account.getCreatedAt(),
                         account.getLevel(),
-                        account.getTelephone())).collect(Collectors.toList());
+                        account.getTelephone(),
+                        account.getFirstName(),
+                        account.getLastName(),
+                        account.getUsername(),
+                        account.getVerified(),
+                        account.getRoute(),
+                        account.getDepartment(),
+                        account.getAffiliate(),
+                        account.getStaff_id())).collect(Collectors.toList());
                 System.out.println(accounts);
                 return ResponseEntity.ok(accounts);
             }
@@ -221,6 +279,59 @@ public class AuthController {
         return new ResponseEntity<ProfileDTO>(new ProfileDTO(), HttpStatus.BAD_REQUEST);
     }
 
+   
+    @PostMapping(value = "/users/reset-password", produces = "application/json")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiResponse(responseCode = "400", description = "Please enter a valid email and Password length between 6 to 20 characters")
+    @ApiResponse(responseCode = "201", description = "Email sent!")
+    @ApiResponse(responseCode = "200", description = "success")
+    @Operation(summary = "Forgot password")
+    public ResponseEntity<String> resetPassword(@Valid @RequestBody PasswordResetPayloadDTO payloadDTO) {
+        Optional<Account> optionalAccount = accountService.findByEmail(payloadDTO.getEmail());
+        if (optionalAccount.isPresent()) {
+            Account account = accountService.findById(optionalAccount.get().getId()).get();
+            String resetToken = UUID.randomUUID().toString();
+            account.setToken(resetToken);
+            account.setPassswordResetTokenExpiry(LocalDateTime.now().plusMinutes(passwordTokenTimeout));
+            accountService.save(account);
+            String resetMessage = "This is the reset password link: " + siteDomain + "change-password?token="
+                    + resetToken;
+                    EmailDetails details = new EmailDetails(account.getEmail(),resetMessage, ("reset pasword: " + account.getFullName()));
+                    if (emailService.sendMail(details)== false) {
+                        return new ResponseEntity<>("Error while sending mail, contact admin", HttpStatus.EXPECTATION_FAILED);
+                    };
+                    return new ResponseEntity<>("Password reset email sent", HttpStatus.OK);
+        } else{
+            return new ResponseEntity<>("No user found with the email supplied!", HttpStatus.EXPECTATION_FAILED);
+    }
+    }
+
+    @PostMapping(value = "/users/change-password", produces = "application/json", consumes = "application/json")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiResponse(responseCode = "400", description = "Please enter a valid email and Password length between 6 to 20 characters")
+    @ApiResponse(responseCode = "417", description = "Invalid token!")
+    @ApiResponse(responseCode = "201", description = "password changed")
+    @ApiResponse(responseCode = "200", description = "success")
+    @Operation(summary = "User to reset password")
+    public ResponseEntity<String> changePassword(@Valid @RequestParam("token") String token,@RequestBody ChangePasswordPayloadDTO payloadDTO) {
+        Optional<Account> optionalAccount = accountService.findByToken(token);
+        if (optionalAccount.isPresent()) {
+            Account account = accountService.findById(optionalAccount.get().getId()).get();
+            LocalDateTime now = LocalDateTime.now();
+            if (now.isAfter(optionalAccount.get().getPassswordResetTokenExpiry())) {
+                return new ResponseEntity<>("Token Expired!!", HttpStatus.EXPECTATION_FAILED);
+            }
+            account = optionalAccount.get();
+            Account accountByid = accountService.findById(account.getId()).get();
+            accountByid.setPassword_hash(payloadDTO.getPassword());
+            accountByid.setToken("");
+            accountService.save(accountByid);
+            return new ResponseEntity<>("Password reset successfully!!!", HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>("Token Expired!!", HttpStatus.EXPECTATION_FAILED);
+    }
+    }
+
     @PutMapping(value = "/profile/update-password", produces = "application/json", consumes = "application/json")
     @ApiResponse(responseCode = "200", description = "List of users")
     @ApiResponse(responseCode = "401", description = "Token missing")
@@ -239,6 +350,45 @@ public class AuthController {
         return profileDTO;
     }
 
+
+    @PutMapping(value = "/profile/{userId}/update-profile", produces = "application/json", consumes = "application/json")
+    @ApiResponse(responseCode = "200", description = "List of users")
+    @ApiResponse(responseCode = "401", description = "Token missing")
+    @ApiResponse(responseCode = "403", description = "Token error")
+    @Operation(summary = "Update user profile by admin")
+    @SecurityRequirement(name = "soole-demo-api")
+    public ResponseEntity<UpdateAccountViewDTO> updateProfile(@Valid @RequestBody UpdateAccountPayloadDTO accountDTO,@PathVariable Long userId, Authentication authentication) {
+        Optional<Account> optionalAccount = accountService.findById(userId);
+        if (optionalAccount.isPresent()) {
+            Account account = optionalAccount.get();
+            account.setAffiliate(accountDTO.getAffiliate());
+            account.setEmail(accountDTO.getEmail());
+        account.setPassword_hash(accountDTO.getPassword_hash());
+        account.setDepartment(accountDTO.getDepartment());
+        account.setAffiliate(accountDTO.getAffiliate());
+        account.setFirstName(accountDTO.getFirstName());
+        account.setLastName(accountDTO.getLastName());
+        account.setLevel(accountDTO.getLevel());
+        account.setTelephone(accountDTO.getTelephone());
+        account.setUsername(accountDTO.getUsername());
+        account.setVerified(accountDTO.getVerified());
+        account.setRoute(accountDTO.getRoute());
+        account.setDepartment(accountDTO.getDepartment());
+        account.setStatus(accountDTO.getStatus());
+        accountService.save(account);
+        UpdateAccountViewDTO accountViewDTO = new UpdateAccountViewDTO(account.getId(), account.getEmail(), account.getLevel(),
+                account.getTelephone(), account.getFirstName(),account.getLastName(),account.getUsername(), account.getVerified(), account.getRoute(), account.getDepartment(), account.getAffiliate(), account.getStatus(), account.getStaff_id());
+        return ResponseEntity.ok(accountViewDTO);
+
+
+        }else{
+        return  ResponseEntity.badRequest().body(null);
+
+        }
+
+    }
+
+
     @PutMapping(value = "/users/{userId}/update-authorities", produces = "application/json", consumes = "application/json")
     @ApiResponse(responseCode = "200", description = "Updated authorities")
     @ApiResponse(responseCode = "401", description = "Token missing")
@@ -253,8 +403,21 @@ public class AuthController {
             Account account = optionalAccount.get();
             account.setAuthorities(authoritiesDTO.getAuthorities());
             accountService.save(account);
-            AccountViewDTO accountViewDTO = new AccountViewDTO(account.getId(), account.getEmail(),
-                    account.getAuthorities(), account.getCreatedAt(), account.getLevel(), account.getTelephone());
+            AccountViewDTO accountViewDTO = new AccountViewDTO(
+                    account.getId(),
+                    account.getEmail(),
+                    account.getAuthorities(),
+                    account.getCreatedAt(),
+                    account.getLevel(),
+                    account.getTelephone(),
+                    account.getFirstName(),
+                    account.getLastName(),
+                    account.getUsername(),
+                    account.getVerified(),
+                    account.getRoute(),
+                    account.getDepartment(),
+                    account.getAffiliate(),
+                    account.getStaff_id());
 
             return ResponseEntity.ok(accountViewDTO);
         }
@@ -284,21 +447,21 @@ public class AuthController {
         return new ResponseEntity<>(new AccountVerifiedViewDTO(), HttpStatus.BAD_REQUEST);
     }
 
-    @DeleteMapping(value = "/profile/delete")
-    @ApiResponse(responseCode = "200", description = "List of users")
-    @ApiResponse(responseCode = "401", description = "Token missing")
-    @ApiResponse(responseCode = "403", description = "Token error")
-    @Operation(summary = "Delete profile")
-    @SecurityRequirement(name = "soole-demo-api")
-    public ResponseEntity<String> deleteUser(Authentication authentication) {
-        String email = authentication.getName();
-        Optional<Account> optionalAccount = accountService.findByEmail(email);
-        if (optionalAccount.isPresent()) {
-            accountService.deleteById(optionalAccount.get().getId());
-            return ResponseEntity.ok("User deleted!");
-        }
-        return new ResponseEntity<String>("Bad request", HttpStatus.BAD_REQUEST);
-    }
+    // @DeleteMapping(value = "/profile/delete")
+    // @ApiResponse(responseCode = "200", description = "List of users")
+    // @ApiResponse(responseCode = "401", description = "Token missing")
+    // @ApiResponse(responseCode = "403", description = "Token error")
+    // @Operation(summary = "Delete profile")
+    // @SecurityRequirement(name = "soole-demo-api")
+    // public ResponseEntity<String> deleteUser(Authentication authentication) {
+    //     String email = authentication.getName();
+    //     Optional<Account> optionalAccount = accountService.findByEmail(email);
+    //     if (optionalAccount.isPresent()) {
+    //         accountService.deleteById(optionalAccount.get().getId());
+    //         return ResponseEntity.ok("User deleted!");
+    //     }
+    //     return new ResponseEntity<String>("Bad request", HttpStatus.BAD_REQUEST);
+    // }
 
     // @GetMapping("/test")
     // @Operation(summary = "welcome to soole")
