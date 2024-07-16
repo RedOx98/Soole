@@ -47,9 +47,22 @@ public class Account {
 
     private String route;
 
+    private String department;
+
+    private String affiliate;
+
+    private String staff_id;
+
+    private String status;
+
     @ManyToOne
     @JoinColumn(name = "bus_id", referencedColumnName = "id", nullable = true)
     private Bus bus;
+
+    @Column(name = "token")
+    private String token;
+
+    private LocalDateTime passswordResetTokenExpiry;
 
     public String getFullName() {
         return firstName + " " + lastName;
