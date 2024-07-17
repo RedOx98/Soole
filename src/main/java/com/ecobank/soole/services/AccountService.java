@@ -24,9 +24,12 @@ import com.ecobank.soole.repositories.AccountRepository;
 import com.ecobank.soole.repositories.BusRepository;
 import com.ecobank.soole.util.constants.Authority;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+// @RequiredArgsConstructor
 public class AccountService implements UserDetailsService {
-    
+
     @Autowired
     private AccountRepository accountRepository;
 

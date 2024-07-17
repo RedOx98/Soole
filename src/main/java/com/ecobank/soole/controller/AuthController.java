@@ -17,13 +17,13 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -37,7 +37,6 @@ import com.ecobank.soole.payload.auth.PasswordDTO;
 import com.ecobank.soole.payload.auth.PasswordResetPayloadDTO;
 import com.ecobank.soole.payload.auth.ProfileDTO;
 import com.ecobank.soole.payload.auth.StatsDTO;
-import com.ecobank.soole.payload.auth.TokenDTO;
 import com.ecobank.soole.payload.auth.TokenViewDTO;
 import com.ecobank.soole.payload.auth.UpdateAccountPayloadDTO;
 import com.ecobank.soole.payload.auth.UpdateAccountViewDTO;
@@ -58,7 +57,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -461,12 +459,5 @@ public class AuthController {
     //         return ResponseEntity.ok("User deleted!");
     //     }
     //     return new ResponseEntity<String>("Bad request", HttpStatus.BAD_REQUEST);
-    // }
-
-    // @GetMapping("/test")
-    // @Operation(summary = "welcome to soole")
-    // // @SecurityRequirement(name = "soole-demo-api")
-    // public String home() {
-    // return "welcome home";
     // }
 }
