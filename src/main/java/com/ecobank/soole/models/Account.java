@@ -56,7 +56,7 @@ public class Account {
     private String status;
 
     @ManyToOne
-    @JoinColumn(name = "bus_id", referencedColumnName = "id", nullable = true)
+    @JoinColumn(name = "bus_id", referencedColumnName = "bus_id", nullable = true)
     private Bus bus;
 
     @Column(name = "token")
