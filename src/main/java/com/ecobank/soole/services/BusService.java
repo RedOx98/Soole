@@ -1,10 +1,8 @@
 package com.ecobank.soole.services;
 
-import java.util.Map;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
 
 import com.ecobank.soole.models.Bus;
 import com.ecobank.soole.payload.bus.BusFetchRequestDTO;
@@ -17,6 +15,8 @@ public interface BusService {
     void addRouteDetails(CreateRouteDTO createRouteDTO, String busId);
 
     Page<Bus> fetchBuses(BusFetchRequestDTO requestDTO);
+
+    Optional<Bus> fetchById(Long id);
 
     void deleteBus(String busId);
 
