@@ -3,7 +3,6 @@ package com.ecobank.soole.services;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,6 +25,8 @@ public class BookingService {
     public Booking save(Booking booking) {
         if (booking.getId() == null) {
             booking.setCreatedAt(LocalDateTime.now());
+            booking.setTake_off_point("EPAC");
+            booking.setTime_of_departure(LocalDateTime.now());
         }
         if (booking.getCreatedAt() == null) {
             booking.setCreatedAt(LocalDateTime.now());
