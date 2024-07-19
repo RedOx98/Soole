@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -57,7 +58,7 @@ public class BusController {
     @ApiResponse(responseCode = "403", description = "Token error")
     @Operation(summary = "List Buses API")
     @SecurityRequirement(name = "soole-demo-api")
-    public ResponseEntity<PagedResponseDTO<Bus>> fetchBuses(@RequestBody BusFetchRequestDTO busFetchRequestDTO) {
+    public ResponseEntity<PagedResponseDTO<Bus>> fetchBuses(@ModelAttribute BusFetchRequestDTO busFetchRequestDTO) {
         Page<Bus> buses = busService.fetchBuses(busFetchRequestDTO);
         return ResponseEntity.status(HttpStatus.OK).body(new PagedResponseDTO<>(buses));
     }

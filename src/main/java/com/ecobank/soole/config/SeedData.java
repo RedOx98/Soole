@@ -99,7 +99,7 @@ public class SeedData implements CommandLineRunner {
         // busStop.add(bstp01);
         // busStop.add(bstp02);
 
-        account01.setEmail("olaskeet@gmail.com");
+        account01.setEmail("user@gmail.com");
         account01.setPassword_hash("password");
         account01.setLevel("Executive Assistant");
         account01.setTelephone("09036123576");
@@ -111,11 +111,11 @@ public class SeedData implements CommandLineRunner {
         account01.setAffiliate("ENG");
         account01.setStaff_id("10928");
         account01.setStatus("activated");
-        account01.setVerified("approved");
+        account01.setVerified("APPROVED");
         accountService.save(account01);
         // accountService.mapToBus(account01, bus01.getBusId());
 
-        account02.setEmail("olahammed@ecobank.com");
+        account02.setEmail("admin@gmail.com");
         account02.setPassword_hash("password");
         account02.setLevel("Executive Assistant");
         account02.setTelephone("09036123576");
@@ -128,7 +128,7 @@ public class SeedData implements CommandLineRunner {
         account02.setAffiliate("ENG");
         account02.setStaff_id("10928");
         account02.setStatus("activated");
-        account02.setVerified("pending");
+        account02.setVerified("APPROVED");
         accountService.save(account02);
         // accountService.mapToBus(account02, bus02.getBusId());
 
@@ -145,7 +145,7 @@ public class SeedData implements CommandLineRunner {
         account03.setAffiliate("ENG");
         account03.setStaff_id("11915");
         account03.setStatus("pending");
-        account03.setVerified("approved");
+        account03.setVerified("APPROVED");
         accountService.save(account03);
         // accountService.mapToBus(account03, bus03.getBusId());
 

@@ -2,6 +2,7 @@ package com.ecobank.soole.services.busimplement;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -118,5 +119,13 @@ public class BusServiceImpl implements BusService {
             log.error(e.getMessage());
             throw new RuntimeException("Error updating bus " + e.getMessage());
         }
+    }
+
+    // I just added this code implementation
+    @Override
+    public Optional<Bus> fetchById(Long id) {
+        // TODO Auto-generated method stub
+        Optional<Bus> optionalBus = busRepository.findById(id);
+        return optionalBus;
     }
 }

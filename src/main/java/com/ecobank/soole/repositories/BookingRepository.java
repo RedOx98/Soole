@@ -8,5 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.ecobank.soole.models.Booking;
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
-    List<Booking> findByCreatedAt(LocalDateTime date);
+    // List<Booking> findAllByAccountId(Long id);
+    List<Booking> findByCreatedAt(LocalDateTime createdAt);
+    List<Booking> findByAccountIdAndBusBusId(Long accountId, Long busId);
 }

@@ -17,6 +17,9 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.jwk.JWKSet;
@@ -59,6 +62,20 @@ public class SecurityConfig {
     JwtEncoder jwtEncoder(JWKSource<SecurityContext> jwks) {
         return new NimbusJwtEncoder(jwks);
     }
+
+     @Bean
+    public CorsFilter corsFilter() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+        
+        config.setAllowCredentials(true); // Allow cookies to be included in requests
+        config.addAllowedOriginPattern("*"); // Allow all origins
+        config.addAllowedHeader("*"); // Allow all headers
+        config.addAllowedMethod("*"); // Allow all methods (GET, POST, etc.)
+        
+        source.registerCorsConfiguration("/**", config);
+        return new CorsFilter(source);
+    }
     
     
     @Bean
@@ -99,6 +116,7 @@ public class SecurityConfig {
             .requestMatchers("/api/v1/bstp/add").hasAuthority("SCOPE_ADMIN")
             .requestMatchers("/api/v1/bstp/delete").hasAuthority("SCOPE_ADMIN")
             .requestMatchers("/api/v1/bstp/update").hasAuthority("SCOPE_ADMIN")
+            .requestMatchers("/api/v1/booking/bookseat").authenticated()
             .requestMatchers("/swagger-ui/**").permitAll()
             .requestMatchers("/v3/api-docs/**").permitAll()
 
