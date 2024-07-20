@@ -129,6 +129,7 @@ public class SeedData implements CommandLineRunner {
         account02.setStaff_id("10928");
         account02.setStatus("activated");
         account02.setVerified("APPROVED");
+        account02.setSpecial("SPECIAL");
         accountService.save(account02);
         // accountService.mapToBus(account02, bus02.getBusId());
 

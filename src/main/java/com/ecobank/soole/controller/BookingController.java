@@ -48,7 +48,6 @@ public class BookingController {
 
     @Autowired
     private BusService busService;
-    
 
     @Autowired
     private AccountRepository accountRepository;
@@ -58,7 +57,7 @@ public class BookingController {
 
     @Autowired
     private BusRepository busRepository;
-    
+
     @PostMapping(value = "/bookseat", produces = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
     @ApiResponse(responseCode = "400", description = "token")
@@ -66,63 +65,79 @@ public class BookingController {
     @ApiResponse(responseCode = "200", description = "success")
     @Operation(summary = "Reserve a spot in the chosen bus")
     @SecurityRequirement(name = "soole-demo-api")
-    public ResponseEntity<BookingViewDTO> reserveSpot(@ModelAttribute BookingPayloadDTO bookingDTO, Authentication authentication){
-        System.out.println(bookingDTO.getUserId());
-        System.out.println(bookingDTO.getDrop_off_point());
-        System.out.println(bookingDTO.getBusId());
-        System.out.println(bookingDTO.getRoute());
+    public ResponseEntity<BookingViewDTO> reserveSpot(@ModelAttribute BookingPayloadDTO bookingDTO,
+            Authentication authentication) {
         Booking booking = new Booking();
         Optional<Bus> optionalBus = busRepository.findById(bookingDTO.getBusId());
-        Bus bus;
-        if (optionalBus.isPresent()) {
-             bus = optionalBus.get();
-            booking.setBus(bus);
-        } 
-        
-        
+        Bus bus = optionalBus.get();
+        if (!optionalBus.isPresent()) {
+            return new ResponseEntity<>(new BookingViewDTO(), HttpStatus.BAD_REQUEST);
+        }
+        Optional<Account> optionalAccount = accountRepository.findById(bookingDTO.getUserId());
+        Account accountVerified = optionalAccount.get();
+        Account account = optionalAccount.get();
+        if (!optionalAccount.isPresent()) {
+            return new ResponseEntity<>(new BookingViewDTO(), HttpStatus.BAD_REQUEST);
+        }
 
+        LocalDateTime now = LocalDateTime.now();
+        boolean isSpecial = "SPECIAL".equals(account.getSpecial());
+        if (bookingService.hasExistingBooking(account.getId(), bus.getBusId(), now, isSpecial)) {
+            return new ResponseEntity<>(new BookingViewDTO(), HttpStatus.BAD_REQUEST);
+        }
         List<Booking> allSeats = bookingService.findAll();
         int totalSeats = allSeats.size();
-        Optional<Account> optionalACcount = accountRepository.findById(bookingDTO.getUserId());
-        if (optionalACcount.isPresent()) {
-            Account account = optionalACcount.get();
-            booking.setAccount(account);
-            booking.setBooker(account.getFullName());
-            if (account.getVerified().equals("APPROVED")) {
-                if (totalSeats < optionalBus.get().getBusCapacity() ) {
-                    booking.setDrop_off_point(bookingDTO.getDrop_off_point());
-                    LocalDateTime now = LocalDateTime.now();
-            if (bookingService.hasExistingBooking(account.getId(), optionalBus.get().getBusId(), now)) {
-                return new ResponseEntity<>(new BookingViewDTO(), HttpStatus.BAD_REQUEST);
-            }
-        booking.setRoute(bookingDTO.getRoute());
-        System.out.println(bookingDTO.getRoute());
-        System.out.println(bookingDTO.getDrop_off_point());
-        System.out.println(bookingDTO.getBusId());
-        System.out.println(bookingDTO.getUserId());
-        
-        System.out.println(booking.toString());
-                booking.setStatus(BookingEnum.status.RESERVED.toString());
-                }else{
-                booking.setStatus(BookingEnum.status.WAITLIST.toString());
-                }
-                bookingService.save(booking);
-            }
 
-        } else {
-            return ResponseEntity.badRequest().body(null);
+        if (accountVerified.getVerified().equals("PENDING") || accountVerified.getVerified().equals("REJECTED")) {
+            return new ResponseEntity<>(new BookingViewDTO(), HttpStatus.BAD_REQUEST);
         }
+
+        booking.setAccount(account);
+        booking.setBooker(account.getFullName());
+        booking.setCreatedAt(now);
+        booking.setDrop_off_point(bookingDTO.getDrop_off_point());
+        booking.setRoute(bookingDTO.getRoute());
+        booking.setAccount(account);
+        booking.setBus(bus);
+        booking.setSpecial(account.getSpecial());
+        booking.setBooker(account.getFullName());
+
+        if (totalSeats < bus.getBusCapacity()) {
+            booking.setStatus("RESERVED");
+        } else {
+            booking.setStatus("WAITLIST");
+        }
+        bookingService.save(booking);
+
         System.out.println(bookingDTO);
         BookingViewDTO bookingViewDTO = new BookingViewDTO();
-            bookingViewDTO.setTime_of_departure(booking.getTime_of_departure()); // Example of setting the time of departure
-            bookingViewDTO.setCreatedAt(booking.getCreatedAt());
-            bookingViewDTO.setTake_off_point(booking.getTake_off_point());
-            bookingViewDTO.setDrop_off_point(booking.getDrop_off_point());
-            bookingViewDTO.setStatus(booking.getStatus());
-            bookingViewDTO.setRoute(booking.getRoute());
+        bookingViewDTO.setDrop_off_point(booking.getDrop_off_point());
+        bookingViewDTO.setStatus(booking.getStatus());
+        bookingViewDTO.setRoute(booking.getRoute());
 
-            return new ResponseEntity<>(bookingViewDTO, HttpStatus.CREATED);
+        return new ResponseEntity<>(bookingViewDTO, HttpStatus.CREATED);
 
         // return ResponseEntity.ok("Seat Booked successfully");
     }
 }
+
+ // if (totalSeats < optionalBus.get().getBusCapacity()) {
+        // booking.setDrop_off_point(bookingDTO.getDrop_off_point());
+        // LocalDateTime now = LocalDateTime.now();
+        // boolean isSpecial = "SPECIAL".equals(account.getSpecial());
+        // if ((bookingService.hasExistingBooking(account.getId(),
+        // optionalBus.get().getBusId(), now,
+        // isSpecial) == true)) {
+        // booking.setRoute(bookingDTO.getRoute());
+        // System.out.println(bookingDTO.getRoute());
+        // System.out.println(bookingDTO.getDrop_off_point());
+        // System.out.println(bookingDTO.getBusId());
+        // System.out.println(bookingDTO.getUserId());
+
+        // System.out.println(booking.toString());
+        // booking.setStatus(BookingEnum.status.RESERVED.toString());
+        // }
+        // } else {
+        // booking.setStatus(BookingEnum.status.WAITLIST.toString());
+        // }
+        // bookingService.save(booking);

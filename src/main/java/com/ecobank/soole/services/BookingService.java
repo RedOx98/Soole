@@ -2,11 +2,14 @@ package com.ecobank.soole.services;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ecobank.soole.models.Account;
 import com.ecobank.soole.models.Booking;
+import com.ecobank.soole.repositories.AccountRepository;
 import com.ecobank.soole.repositories.BookingRepository;
 import com.ecobank.soole.util.constants.BookingTimeFrameUtil;
 
@@ -15,6 +18,9 @@ public class BookingService {
 
     @Autowired
     private BookingRepository bookingRepository;
+
+    @Autowired
+    private AccountService accountService;
 
     public Booking save(Booking booking) {
         if (booking.getId() == null) {
@@ -42,26 +48,49 @@ public class BookingService {
     // }
 
     // public List<Booking> findBookingsByBusId(Long id) {
-    //     return bookingRepository.findAllByBus_Id(id);
+    // return bookingRepository.findAllByBus_Id(id);
     // }
 
     // public List<Booking> findBookingsByAccountId(Long id) {
-    //     return bookingRepository.findAllByAccount_Id(id);
+    // return bookingRepository.findAllByAccount_Id(id);
     // }
 
-    public Boolean hasExistingBooking(Long userId, Long busId, LocalDateTime dateTime){
+    public boolean hasExistingBooking(Long userId, Long busId, LocalDateTime dateTime, boolean isSpecial) {
         boolean isMorning = BookingTimeFrameUtil.isMorning(dateTime);
         boolean isEvening = BookingTimeFrameUtil.isEvening(dateTime);
 
         List<Booking> existingBookings = bookingRepository.findByAccountIdAndBusBusId(userId, busId);
-        for(Booking booking: existingBookings){
-            if (isEvening&& BookingTimeFrameUtil.isEvening(booking.getCreatedAt())) {
-                return true;
-            }
-            if (isMorning&& BookingTimeFrameUtil.isMorning(booking.getCreatedAt())) {
+
+        Optional<Account> existingAccount = accountService.findById(userId);
+        Account account = existingAccount.get();
+
+        for(Booking bookings:existingBookings){
+            if (bookings.getBooker().equals(account.getFullName())) {
                 return true;
             }
         }
-        return false;
+        // specials can book without time constraint
+        if (isSpecial) {
+            return false;
+        }
+
+        // check normal user hasnt booked before
+        for(Booking bookings:existingBookings){
+            if (bookings.getBooker().equals(account.getFullName())) {
+                return true;
+            }
+        }
+        // A normal user still must book at the set time
+            if (isEvening && BookingTimeFrameUtil.isEvening(LocalDateTime.now())) {
+                return false; // Already booked in the morning
+            }
+            if (isMorning && BookingTimeFrameUtil.isMorning(LocalDateTime.now())) {
+                return false; // Already booked in the evening
+            }
+
+            
+        
+
+        return true; // No existing booking that violates the rules
     }
 }
