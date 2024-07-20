@@ -39,7 +39,7 @@ public class AccountService implements UserDetailsService {
     @Autowired
     private BusRepository busRepository;
 
-    public Account save(Account account){
+    public Account save(Account account) {
 
         account.setPassword_hash(passwordEncoder.encode(account.getPassword_hash()));
         if (account.getId() == null) {
@@ -54,11 +54,11 @@ public class AccountService implements UserDetailsService {
         if (account.getCreatedAt() == null) {
             account.setCreatedAt(LocalDateTime.now());
         }
-        
+
         return accountRepository.save(account);
     }
 
-    public Account mapToBus(Account account, Long busId){
+    public Account mapToBus(Account account, Long busId) {
 
         account.setPassword_hash(passwordEncoder.encode(account.getPassword_hash()));
         if (account.getId() == null) {
@@ -68,7 +68,7 @@ public class AccountService implements UserDetailsService {
             account.setAuthorities(Authority.USER.toString());
         }
         if (account.getVerified() == null) {
-            account.setVerified("true");
+            account.setVerified("PENDING");
         }
         if (account.getCreatedAt() == null) {
             account.setCreatedAt(LocalDateTime.now());
@@ -78,42 +78,45 @@ public class AccountService implements UserDetailsService {
         if (optionalBus.isPresent()) {
             Bus bus = optionalBus.get();
             account.setBus(bus);
-        }else{
+        } else {
             throw new RuntimeException();
         }
+
+        // account.setSpecial("OKAY");
+        // account.setBoard("PENDING");
 
         return accountRepository.save(account);
     }
 
-    public Page<Account> findAccounts(int offset, int pageSize, String field){
+    public Page<Account> findAccounts(int offset, int pageSize, String field) {
         return accountRepository.findAll(PageRequest.of(offset, pageSize).withSort(Direction.ASC, field));
     }
 
-    public List<Account> findAll(){
+    public List<Account> findAll() {
         return accountRepository.findAll();
     }
 
-    public Optional<Account> findByEmail(String email){
+    public Optional<Account> findByEmail(String email) {
         return accountRepository.findByEmail(email);
     }
 
-    public List<Account> findByAuthorities(String authority){
+    public List<Account> findByAuthorities(String authority) {
         return accountRepository.findByAuthorities(authority);
     }
 
-    public List<Account> findByVerified(String status){
+    public List<Account> findByVerified(String status) {
         return accountRepository.findByVerified(status);
     }
 
-    public Optional<Account> findById(Long id){
+    public Optional<Account> findById(Long id) {
         return accountRepository.findById(id);
     }
 
-    public Optional<Account> findByToken(String token){
+    public Optional<Account> findByToken(String token) {
         return accountRepository.findByToken(token);
     }
 
-    public void deleteById(Long id){
+    public void deleteById(Long id) {
         accountRepository.deleteById(id);
     }
 
@@ -128,6 +131,5 @@ public class AccountService implements UserDetailsService {
         grantedAuthority.add(new SimpleGrantedAuthority(account.getAuthorities()));
         return new User(account.getEmail(), account.getPassword_hash(), grantedAuthority);
     }
-
 
 }
