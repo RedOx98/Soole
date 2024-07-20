@@ -2,14 +2,18 @@ package com.ecobank.soole.models;
 
 import java.time.LocalDateTime;
 
+import com.ecobank.soole.util.constants.BookingEnum;
+import com.ecobank.soole.util.constants.BusEnum;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,59 +21,36 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-// @Table(name = "account")
-public class Account {
+@Table(name = "booking")
+public class Booking {
     
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @Column(unique = true)
-    private String email;
-
-    private String password_hash;
-
-    private String authorities;
+    private LocalDateTime time_of_departure;
 
     private LocalDateTime createdAt;
 
-    private String level;
+    private String take_off_point;
 
-    private String telephone;
+    private String drop_off_point;
 
-    private String firstName;
-
-    private String lastName;
-
-    private String username;
-
-    private String verified;
+    // @Enumerated(EnumType.STRING)
+    // @Column(name = "status", columnDefinition = "enum('RESERVED','WAITLIST') DEFAULT 'RESERVED'")
+    private String status;
 
     private String route;
 
-    private String department;
-
-    private String affiliate;
-
-    private String staff_id;
-
-    private String status;
+    private String booker;
 
     private String special;
-
-    private String board;
 
     @ManyToOne
     @JoinColumn(name = "bus_id", referencedColumnName = "bus_id", nullable = true)
     private Bus bus;
 
-    @Column(name = "token")
-    private String token;
-
-    private LocalDateTime passswordResetTokenExpiry;
-
-    public String getFullName() {
-        return firstName + " " + lastName;
-    }
-
+    @ManyToOne
+    @JoinColumn(name = "account_id", referencedColumnName = "id", nullable = true)
+    private Account account;
 }
