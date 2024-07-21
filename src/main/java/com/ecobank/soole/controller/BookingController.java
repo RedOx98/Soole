@@ -79,7 +79,24 @@ public class BookingController {
         LocalDateTime now = LocalDateTime.now();
         boolean isSpecial = "SPECIAL".equals(account.getSpecial());
         if (bookingService.hasExistingBooking(account.getId(), bus.getBusId(), now, isSpecial)) {
-            return new ResponseEntity<>(new BookingViewDTO(), HttpStatus.BAD_REQUEST);
+            BookingViewDTO existingBookingViewDTO = new BookingViewDTO();
+
+            List<Booking> optionalBooking = bookingService.findByBusIdAndDate(bookingDTO.getBusId(), LocalDate.now());
+            for (Booking existingBookings : optionalBooking) {
+                if (existingBookings.getBooker().equals(account.getFullName())) {
+                    existingBookingViewDTO.setCreatedAt(existingBookings.getCreatedAt());
+                    System.out.println(existingBookings.getBooker());
+                    existingBookingViewDTO.setTake_off_point(existingBookings.getTake_off_point());
+                    existingBookingViewDTO.setDrop_off_point(existingBookings.getDrop_off_point());
+                    existingBookingViewDTO.setStatus(existingBookings.getStatus());
+                    existingBookingViewDTO.setRoute(existingBookings.getRoute());
+                    existingBookingViewDTO.setDrop_off_point(existingBookings.getDrop_off_point());
+                    existingBookingViewDTO.setTime_of_departure(existingBookings.getTime_of_departure());
+                    System.out.println(existingBookings);
+                    existingBookingViewDTO.setBoard(existingBookings.getBoard());
+                }
+                return new ResponseEntity<>(existingBookingViewDTO, HttpStatus.OK);
+            }
         }
         List<Booking> allSeats = bookingService.findAll();
         int totalSeats = allSeats.size();
