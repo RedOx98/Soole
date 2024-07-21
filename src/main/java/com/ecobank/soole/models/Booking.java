@@ -46,6 +46,8 @@ public class Booking {
 
     private String special;
 
+    private String board;
+
     @ManyToOne
     @JoinColumn(name = "bus_id", referencedColumnName = "bus_id", nullable = true)
     private Bus bus;

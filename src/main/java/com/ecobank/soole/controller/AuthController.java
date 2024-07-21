@@ -124,10 +124,12 @@ public class AuthController {
             account.setUsername(accountDTO.getUsername());
             accountService.save(account);
             String welcomeMessage = "Welcome to SOOLE APP";
-                    EmailDetailsWelcome details = new EmailDetailsWelcome(account.getEmail(),welcomeMessage, "Soole just testing", account.getFirstName());
-            if (emailService.sendWelcomeEmail(details)== false) {
+            EmailDetailsWelcome details = new EmailDetailsWelcome(account.getEmail(), welcomeMessage,
+                    "Soole just testing", account.getFirstName());
+            if (emailService.sendWelcomeEmail(details) == false) {
                 return new ResponseEntity<>("Error while sending mail, contact admin", HttpStatus.EXPECTATION_FAILED);
-            };
+            }
+            ;
 
             return ResponseEntity.ok(AccountSuccess.ACCOUNT_ADDED.toString());
         } catch (Exception e) {
@@ -205,8 +207,9 @@ public class AuthController {
                     users.getLastName(), users.getUsername(), users.getVerified(), users.getRoute(),
                     users.getDepartment(), users.getAffiliate(), users.getStaff_id()));
         }
-        
-        StatsDTO stats = new StatsDTO(accounts.size(), approved.size(), pending.size(),rejected.size(), captains.size());
+
+        StatsDTO stats = new StatsDTO(accounts.size(), approved.size(), pending.size(), rejected.size(),
+                captains.size());
         return stats;
     }
 
@@ -277,7 +280,6 @@ public class AuthController {
         return new ResponseEntity<ProfileDTO>(new ProfileDTO(), HttpStatus.BAD_REQUEST);
     }
 
-   
     @PostMapping(value = "/users/reset-password", produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
     @ApiResponse(responseCode = "400", description = "Please enter a valid email and Password length between 6 to 20 characters")
@@ -294,14 +296,16 @@ public class AuthController {
             accountService.save(account);
             String resetMessage = "This is the reset password link: " + siteDomain + "change-password?token="
                     + resetToken;
-                    EmailDetails details = new EmailDetails(account.getEmail(),resetMessage, ("reset pasword: " + account.getFullName()));
-                    if (emailService.sendMail(details)== false) {
-                        return new ResponseEntity<>("Error while sending mail, contact admin", HttpStatus.EXPECTATION_FAILED);
-                    };
-                    return new ResponseEntity<>("Password reset email sent", HttpStatus.OK);
-        } else{
+            EmailDetails details = new EmailDetails(account.getEmail(), resetMessage,
+                    ("reset pasword: " + account.getFullName()));
+            if (emailService.sendMail(details) == false) {
+                return new ResponseEntity<>("Error while sending mail, contact admin", HttpStatus.EXPECTATION_FAILED);
+            }
+            ;
+            return new ResponseEntity<>("Password reset email sent", HttpStatus.OK);
+        } else {
             return new ResponseEntity<>("No user found with the email supplied!", HttpStatus.EXPECTATION_FAILED);
-    }
+        }
     }
 
     @PostMapping(value = "/users/change-password", produces = "application/json", consumes = "application/json")
@@ -311,7 +315,8 @@ public class AuthController {
     @ApiResponse(responseCode = "201", description = "password changed")
     @ApiResponse(responseCode = "200", description = "success")
     @Operation(summary = "User to reset password")
-    public ResponseEntity<String> changePassword(@Valid @RequestParam("token") String token,@RequestBody ChangePasswordPayloadDTO payloadDTO) {
+    public ResponseEntity<String> changePassword(@Valid @RequestParam("token") String token,
+            @RequestBody ChangePasswordPayloadDTO payloadDTO) {
         Optional<Account> optionalAccount = accountService.findByToken(token);
         if (optionalAccount.isPresent()) {
             Account account = accountService.findById(optionalAccount.get().getId()).get();
@@ -325,9 +330,9 @@ public class AuthController {
             accountByid.setToken("");
             accountService.save(accountByid);
             return new ResponseEntity<>("Password reset successfully!!!", HttpStatus.OK);
-        }else{
+        } else {
             return new ResponseEntity<>("Token Expired!!", HttpStatus.EXPECTATION_FAILED);
-    }
+        }
     }
 
     @PutMapping(value = "/profile/update-password", produces = "application/json", consumes = "application/json")
@@ -348,44 +353,45 @@ public class AuthController {
         return profileDTO;
     }
 
-
     @PutMapping(value = "/profile/{userId}/update-profile", produces = "application/json", consumes = "application/json")
     @ApiResponse(responseCode = "200", description = "List of users")
     @ApiResponse(responseCode = "401", description = "Token missing")
     @ApiResponse(responseCode = "403", description = "Token error")
     @Operation(summary = "Update user profile by admin")
     @SecurityRequirement(name = "soole-demo-api")
-    public ResponseEntity<UpdateAccountViewDTO> updateProfile(@Valid @RequestBody UpdateAccountPayloadDTO accountDTO,@PathVariable Long userId, Authentication authentication) {
+    public ResponseEntity<UpdateAccountViewDTO> updateProfile(@Valid @RequestBody UpdateAccountPayloadDTO accountDTO,
+            @PathVariable Long userId, Authentication authentication) {
         Optional<Account> optionalAccount = accountService.findById(userId);
         if (optionalAccount.isPresent()) {
             Account account = optionalAccount.get();
             account.setAffiliate(accountDTO.getAffiliate());
             account.setEmail(accountDTO.getEmail());
-        account.setPassword_hash(accountDTO.getPassword_hash());
-        account.setDepartment(accountDTO.getDepartment());
-        account.setAffiliate(accountDTO.getAffiliate());
-        account.setFirstName(accountDTO.getFirstName());
-        account.setLastName(accountDTO.getLastName());
-        account.setLevel(accountDTO.getLevel());
-        account.setTelephone(accountDTO.getTelephone());
-        account.setUsername(accountDTO.getUsername());
-        account.setVerified(accountDTO.getVerified());
-        account.setRoute(accountDTO.getRoute());
-        account.setDepartment(accountDTO.getDepartment());
-        account.setStatus(accountDTO.getStatus());
-        accountService.save(account);
-        UpdateAccountViewDTO accountViewDTO = new UpdateAccountViewDTO(account.getId(), account.getEmail(), account.getLevel(),
-                account.getTelephone(), account.getFirstName(),account.getLastName(),account.getUsername(), account.getVerified(), account.getRoute(), account.getDepartment(), account.getAffiliate(), account.getStatus(), account.getStaff_id());
-        return ResponseEntity.ok(accountViewDTO);
+            account.setPassword_hash(accountDTO.getPassword_hash());
+            account.setDepartment(accountDTO.getDepartment());
+            account.setAffiliate(accountDTO.getAffiliate());
+            account.setFirstName(accountDTO.getFirstName());
+            account.setLastName(accountDTO.getLastName());
+            account.setLevel(accountDTO.getLevel());
+            account.setTelephone(accountDTO.getTelephone());
+            account.setUsername(accountDTO.getUsername());
+            account.setVerified(accountDTO.getVerified());
+            account.setRoute(accountDTO.getRoute());
+            account.setDepartment(accountDTO.getDepartment());
+            account.setStatus(accountDTO.getStatus());
+            accountService.save(account);
+            UpdateAccountViewDTO accountViewDTO = new UpdateAccountViewDTO(account.getId(), account.getEmail(),
+                    account.getLevel(),
+                    account.getTelephone(), account.getFirstName(), account.getLastName(), account.getUsername(),
+                    account.getVerified(), account.getRoute(), account.getDepartment(), account.getAffiliate(),
+                    account.getStatus(), account.getStaff_id());
+            return ResponseEntity.ok(accountViewDTO);
 
-
-        }else{
-        return  ResponseEntity.badRequest().body(null);
+        } else {
+            return ResponseEntity.badRequest().body(null);
 
         }
 
     }
-
 
     @PutMapping(value = "/users/{userId}/update-authorities", produces = "application/json", consumes = "application/json")
     @ApiResponse(responseCode = "200", description = "Updated authorities")
@@ -452,12 +458,12 @@ public class AuthController {
     // @Operation(summary = "Delete profile")
     // @SecurityRequirement(name = "soole-demo-api")
     // public ResponseEntity<String> deleteUser(Authentication authentication) {
-    //     String email = authentication.getName();
-    //     Optional<Account> optionalAccount = accountService.findByEmail(email);
-    //     if (optionalAccount.isPresent()) {
-    //         accountService.deleteById(optionalAccount.get().getId());
-    //         return ResponseEntity.ok("User deleted!");
-    //     }
-    //     return new ResponseEntity<String>("Bad request", HttpStatus.BAD_REQUEST);
+    // String email = authentication.getName();
+    // Optional<Account> optionalAccount = accountService.findByEmail(email);
+    // if (optionalAccount.isPresent()) {
+    // accountService.deleteById(optionalAccount.get().getId());
+    // return ResponseEntity.ok("User deleted!");
+    // }
+    // return new ResponseEntity<String>("Bad request", HttpStatus.BAD_REQUEST);
     // }
 }

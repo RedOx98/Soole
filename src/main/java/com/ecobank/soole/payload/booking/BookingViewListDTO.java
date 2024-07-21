@@ -11,7 +11,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class BookingViewDTO {
+public class BookingViewListDTO {
     
 
     private LocalDateTime time_of_departure;
@@ -25,5 +25,6 @@ public class BookingViewDTO {
     private String status;
 
     private String route;
+
     private String board;
 }
