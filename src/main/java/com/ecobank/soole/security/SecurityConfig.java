@@ -117,6 +117,8 @@ public class SecurityConfig {
             .requestMatchers("/api/v1/bstp/delete").hasAuthority("SCOPE_ADMIN")
             .requestMatchers("/api/v1/bstp/update").hasAuthority("SCOPE_ADMIN")
             .requestMatchers("/api/v1/booking/bookseat").authenticated()
+            .requestMatchers("/api/v1/booking/{busId}/bookings").hasAuthority("SCOPE_CAPTAIN")
+            .requestMatchers("/api/v1/booking/{bookingId}/update").hasAuthority("SCOPE_CAPTAIN")
             .requestMatchers("/swagger-ui/**").permitAll()
             .requestMatchers("/v3/api-docs/**").permitAll()
 

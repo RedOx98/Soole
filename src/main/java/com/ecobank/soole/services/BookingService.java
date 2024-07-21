@@ -1,5 +1,6 @@
 package com.ecobank.soole.services;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -25,8 +26,6 @@ public class BookingService {
     public Booking save(Booking booking) {
         if (booking.getId() == null) {
             booking.setCreatedAt(LocalDateTime.now());
-            booking.setTake_off_point("EPAC");
-            booking.setTime_of_departure(LocalDateTime.now());
         }
         if (booking.getCreatedAt() == null) {
             booking.setCreatedAt(LocalDateTime.now());
@@ -39,21 +38,17 @@ public class BookingService {
         return bookingRepository.findAll();
     }
 
-    public List<Booking> findByDate(LocalDateTime date) {
-        return bookingRepository.findByCreatedAt(date);
+    public List<Booking> findByBusIdAndDate(Long id,LocalDate date) {
+        return bookingRepository.findByBusIdAndDate(id, date);
     }
 
-    // public List<Booking> findBusBookings(Long id){
-    // return bookingRepository.findByBus_Id(id);
+    // public Optional<Booking> findBookingIdAndBusId(Long bookId, Long busId){
+    // return bookingRepository.findByBookingIdAndBusBusId(bookId, busId);
     // }
 
-    // public List<Booking> findBookingsByBusId(Long id) {
-    // return bookingRepository.findAllByBus_Id(id);
-    // }
-
-    // public List<Booking> findBookingsByAccountId(Long id) {
-    // return bookingRepository.findAllByAccount_Id(id);
-    // }
+    public Optional<Booking> findByBookingId(Long bookId){
+        return bookingRepository.findById(bookId);
+    }
 
     public boolean hasExistingBooking(Long userId, Long busId, LocalDateTime dateTime, boolean isSpecial) {
         boolean isMorning = BookingTimeFrameUtil.isMorning(dateTime);
