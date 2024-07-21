@@ -18,4 +18,5 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     // Optional<Booking> findByBookingIdAndBusBusId(Long bookId, Long busId);
     @Query("SELECT b FROM Booking b WHERE b.bus.id = :busId AND DATE(b.createdAt) = :date")
     List<Booking> findByBusIdAndDate(@Param("busId") Long busId, @Param("date") LocalDate date);
+    List<Booking> findByCreatedAtBefore(LocalDateTime dateTime);
 }
