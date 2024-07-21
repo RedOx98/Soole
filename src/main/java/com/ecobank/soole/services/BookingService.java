@@ -26,8 +26,6 @@ public class BookingService {
     public Booking save(Booking booking) {
         if (booking.getId() == null) {
             booking.setCreatedAt(LocalDateTime.now());
-            booking.setTake_off_point("EPAC");
-            booking.setTime_of_departure(LocalDateTime.now());
         }
         if (booking.getCreatedAt() == null) {
             booking.setCreatedAt(LocalDateTime.now());
