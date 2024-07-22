@@ -2,6 +2,7 @@ package com.ecobank.soole.services.busimplement;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -37,11 +38,13 @@ public class BusServiceImpl implements BusService {
     public void createBus(CreateBusDTO createBusDTO) {
         // Check if bus with same bus number already exists
         if (busRepository.findByBusNumber(createBusDTO.getBusNumber()).isPresent()) {
-            throw new ObjectAlreadyExistsException("Bus with bus number " + createBusDTO.getBusNumber() + " already exists");
+            throw new ObjectAlreadyExistsException(
+                    "Bus with bus number " + createBusDTO.getBusNumber() + " already exists");
         }
         Bus bus = BusMapper.MapToBus(createBusDTO, new Bus());
         try {
             busRepository.save(bus);
+            System.out.println("BUs saved");
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new RuntimeException("Unable to create bus " + e.getMessage());
@@ -51,7 +54,8 @@ public class BusServiceImpl implements BusService {
     @Override
     public void addRouteDetails(CreateRouteDTO createRouteDTO, String busId) {
         // Fetch bus
-        Bus bus = busRepository.findById(Long.valueOf(busId)).orElseThrow(() -> new ResourceNotFoundException("Bus not found with Id: " + busId));
+        Bus bus = busRepository.findById(Long.valueOf(busId))
+                .orElseThrow(() -> new ResourceNotFoundException("Bus not found with Id: " + busId));
         bus = BusMapper.MapRouteToBus(createRouteDTO, bus);
         try {
             busRepository.save(bus);
@@ -107,24 +111,45 @@ public class BusServiceImpl implements BusService {
     }
 
     @Override
-    public void updateBusDetails(CreateBusDTO createBusDTO, String busId) {
+    public void updateBusDetails(String busId, Map<String, Object> updateData) {
         // Fetch bus
-        Bus bus = busRepository.findById(Long.valueOf(busId)).orElseThrow(() -> new ResourceNotFoundException("Bus not found with Id: " + busId));
+        Bus bus = busRepository.findById(Long.valueOf(busId))
+                .orElseThrow(() -> new ResourceNotFoundException("Bus not found with Id: " + busId));
 
-        // Update and save bus details
-        bus = BusMapper.MapToBus(createBusDTO, bus);
-        try {
-            busRepository.save(bus);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            throw new RuntimeException("Error updating bus " + e.getMessage());
-        }
+        // Update specific fields based on provided data in the map
+        updateData.forEach((key, value) -> {
+            switch (key) {
+                case "busNumber":
+                    bus.setBusNumber((String) value);
+                    break;
+                case "operationalStatus":
+                    bus.setOperationalStatus(BusEnum.OperationalStatus.valueOf((String) value));
+                    break;
+                case "busModel":
+                    bus.setBusModel((String) value);
+                    break;
+                case "busCapacity":
+                    bus.setBusCapacity(Integer.parseInt((String) value));
+                    break;
+                case "busColor":
+                    bus.setBusColor((String) value);
+                    break;
+                case "routeName":
+                    bus.setRouteName((String) value);
+                    break;
+                default:
+                    // Handle unsupported fields
+                    throw new IllegalArgumentException("Unsupported update field: " + key);
+            }
+        });
+
+        // Save the updated bus
+        busRepository.save(bus);
     }
 
     // I just added this code implementation
     @Override
     public Optional<Bus> fetchById(Long id) {
-        // TODO Auto-generated method stub
         Optional<Bus> optionalBus = busRepository.findById(id);
         return optionalBus;
     }
