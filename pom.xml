@@ -73,6 +73,7 @@
 			<artifactId>
 				lombok
 			</artifactId>
+			<version>LATEST</version>
 			<optional>
 				true
 			</optional>

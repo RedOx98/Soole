@@ -53,7 +53,7 @@ public class Bus extends BaseEntity{
     private String captainId;
 
     @OneToMany(mappedBy = "bus")
-    private Set<BusStop> busStops;
+    private List<BusStop> busStops;
 
     @OneToMany(mappedBy = "bus", cascade = CascadeType.ALL)
     private List<Account> accounts;
