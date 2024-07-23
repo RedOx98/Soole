@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ecobank.soole.models.BusStop;
 import com.ecobank.soole.payload.ResponseDTO;
 import com.ecobank.soole.payload.bus.CreateBusStopDTO;
 import com.ecobank.soole.services.BusStopService;
@@ -50,9 +51,9 @@ public class BusStopController {
     @ApiResponse(responseCode = "200", description = "success")
     @Operation(summary = "Admin Create bus-stop")
     @SecurityRequirement(name = "soole-demo-api")
-    public ResponseEntity<ResponseDTO> createBusStop(@Valid @RequestBody CreateBusStopDTO createBusStopDTO, @RequestParam String busId) {
-        busStopService.createBusStop(createBusStopDTO, busId);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO(HttpStatus.CREATED, "Bus stop added successfully!"));
+    public ResponseEntity<BusStop> createBusStop(@Valid @RequestBody CreateBusStopDTO createBusStopDTO, @RequestParam String busId) {
+      BusStop busStop =   busStopService.createBusStop(createBusStopDTO, busId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(busStop);
     }
 
     @PutMapping(value = "/update", produces = "application/json", consumes = "application/json")

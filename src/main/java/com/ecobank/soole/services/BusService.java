@@ -1,5 +1,6 @@
 package com.ecobank.soole.services;
 
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -20,5 +21,5 @@ public interface BusService {
 
     void deleteBus(String busId);
 
-    void updateBusDetails(CreateBusDTO createBusDTO, String busId);
+    void updateBusDetails(String busId, Map<String, Object> updateData);
 }
