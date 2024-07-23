@@ -222,9 +222,12 @@ public class AuthController {
     public ResponseEntity<List<AccountViewDTO>> allUsers(
             @RequestParam(required = false, name = "sort_by", defaultValue = "createdAt") String sort_by,
             @RequestParam(required = false, name = "per_page", defaultValue = "2") String per_page,
-            @RequestParam(required = false, name = "page", defaultValue = "page") String page) {
+            @RequestParam(required = false, name = "page", defaultValue = "1") String page,
+            @RequestParam(required = false, name = "name", defaultValue = "") String name,
+            @RequestParam(required = false, name = "authorities", defaultValue = "") String authorities
+            ) {
         Page<Account> accountsOnPage = accountService.findAccounts(Integer.parseInt(page) - 1,
-                Integer.parseInt(per_page), sort_by);
+                Integer.parseInt(per_page), sort_by, name, authorities);
         List<Account> accountList = accountsOnPage.getContent();
         int totalPages = accountsOnPage.getTotalPages();
         List<Integer> pages = new ArrayList<>();
