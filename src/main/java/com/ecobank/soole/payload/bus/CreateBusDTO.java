@@ -35,5 +35,5 @@ public class CreateBusDTO {
 
 //    @NotBlank(message = "Route name must not be blank")
 //    @Size(min = 3, message = "Route name must be at least 3 characters long")
-//    private String routeName;
+    private String routeName;
 }

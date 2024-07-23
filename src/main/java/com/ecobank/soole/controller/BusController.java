@@ -1,5 +1,7 @@
 package com.ecobank.soole.controller;
 
+import java.util.Map;
+
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -7,6 +9,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -74,15 +77,15 @@ public class BusController {
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseDTO(HttpStatus.OK, "Bus deleted successfully"));
     }
 
-    @PutMapping(value = "/update", produces = "application/json", consumes = "application/json")
+    @PatchMapping(value = "/update", produces = "application/json", consumes = "application/json")
     @ApiResponse(responseCode = "200", description = "Updated bus")
     @ApiResponse(responseCode = "401", description = "Token missing")
     @ApiResponse(responseCode = "403", description = "Token error")
     @ApiResponse(responseCode = "400", description = "Invalid bus")
     @Operation(summary = "Admin Update bus")
     @SecurityRequirement(name = "soole-demo-api")
-    public ResponseEntity<ResponseDTO> updateBusDetails(@RequestParam String busId, @Valid @RequestBody CreateBusDTO createBusDTO) {
-        busService.updateBusDetails(createBusDTO, busId);
+    public ResponseEntity<ResponseDTO> updateBusDetails(@RequestParam String busId, @RequestBody Map<String, Object> updateData) {
+        busService.updateBusDetails(busId, updateData);
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseDTO(HttpStatus.OK, "Bus details updated successfully"));
     }
 
