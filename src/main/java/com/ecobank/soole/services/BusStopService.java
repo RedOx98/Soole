@@ -1,9 +1,10 @@
 package com.ecobank.soole.services;
 
+import com.ecobank.soole.models.BusStop;
 import com.ecobank.soole.payload.bus.CreateBusStopDTO;
 
 public interface BusStopService {
-    void createBusStop(CreateBusStopDTO createBusStopDTO, String busStopId);
+    BusStop createBusStop(CreateBusStopDTO createBusStopDTO, String busStopId);
 
     void updateBusStop(CreateBusStopDTO createBusStopDTO, String busStopId);
 

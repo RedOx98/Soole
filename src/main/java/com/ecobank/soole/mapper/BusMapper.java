@@ -25,6 +25,7 @@ public final class BusMapper {
         bus.setBusColor(createBusDTO.getBusColor());
         bus.setBusNumber(createBusDTO.getBusNumber());
         bus.setOperationalStatus(createBusDTO.getOperationalStatus());
+        bus.setRouteName(createBusDTO.getRouteName());
         return bus;
     }
 

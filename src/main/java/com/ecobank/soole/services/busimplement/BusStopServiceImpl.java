@@ -23,12 +23,13 @@ public class BusStopServiceImpl implements BusStopService {
 
     // Create bus stop
     @Override
-    public void createBusStop(CreateBusStopDTO createBusStopDTO, String busId) {
+    public BusStop createBusStop(CreateBusStopDTO createBusStopDTO, String busId) {
         // Fetch bus
         Bus bus = busRepository.findById(Long.valueOf(busId)).orElseThrow(() -> new ResourceNotFoundException("Bus not found with Id: " + busId));
         BusStop busStop = BusMapper.MapToBusStop(createBusStopDTO, new BusStop(), bus);
         try {
-            busStopRepository.save(busStop);
+            BusStop savedBusStop = busStopRepository.save(busStop);
+            return savedBusStop;
         } catch (Exception e) {
             throw new RuntimeException("Error adding bus stop " + e.getMessage());
         }
