@@ -8,6 +8,8 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -23,8 +25,6 @@ import com.ecobank.soole.models.Bus;
 import com.ecobank.soole.repositories.AccountRepository;
 import com.ecobank.soole.repositories.BusRepository;
 import com.ecobank.soole.util.constants.Authority;
-
-import lombok.RequiredArgsConstructor;
 
 @Service
 // @RequiredArgsConstructor
