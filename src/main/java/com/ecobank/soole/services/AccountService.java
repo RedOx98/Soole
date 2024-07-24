@@ -88,8 +88,9 @@ public class AccountService implements UserDetailsService {
         return accountRepository.save(account);
     }
 
-    public Page<Account> findAccounts(int offset, int pageSize, String field) {
-        return accountRepository.findAll(PageRequest.of(offset, pageSize).withSort(Direction.ASC, field));
+    public Page<Account> findAccounts(int page, int pageSize, String sortBy, String name, String authorities) {
+        Pageable pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.ASC, sortBy));
+        return accountRepository.findByNameAndDate(name, authorities, pageable);
     }
 
     public List<Account> findAll() {

@@ -154,7 +154,7 @@ public class BusServiceImpl implements BusService {
         return optionalBus;
     }
 
-    @Override
+    // @Override
     public void updateBusDetails(CreateBusDTO createBusDTO, String busId) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'updateBusDetails'");

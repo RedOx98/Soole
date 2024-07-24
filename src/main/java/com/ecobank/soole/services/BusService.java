@@ -21,5 +21,5 @@ public interface BusService {
 
     void deleteBus(String busId);
 
-    void updateBusDetails(CreateBusDTO createBusDTO, String busId);
+    void updateBusDetails(String busId, Map<String, Object> updateData);
 }
