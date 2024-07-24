@@ -110,7 +110,7 @@ public class BusServiceImpl implements BusService {
         }
     }
 
-    @Override
+    // @Override
     public void updateBusDetails(String busId, Map<String, Object> updateData) {
         // Fetch bus
         Bus bus = busRepository.findById(Long.valueOf(busId))
@@ -152,5 +152,11 @@ public class BusServiceImpl implements BusService {
     public Optional<Bus> fetchById(Long id) {
         Optional<Bus> optionalBus = busRepository.findById(id);
         return optionalBus;
+    }
+
+    @Override
+    public void updateBusDetails(CreateBusDTO createBusDTO, String busId) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'updateBusDetails'");
     }
 }
