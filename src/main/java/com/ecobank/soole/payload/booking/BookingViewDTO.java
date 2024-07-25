@@ -14,6 +14,7 @@ import lombok.Setter;
 public class BookingViewDTO {
     
 
+    private Long id;
     private LocalDateTime time_of_departure;
 
     private LocalDateTime createdAt;
@@ -26,4 +27,5 @@ public class BookingViewDTO {
 
     private String route;
     private String board;
+    private String booker;
 }

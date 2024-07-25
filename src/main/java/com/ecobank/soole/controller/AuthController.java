@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ecobank.soole.models.Account;
+import com.ecobank.soole.models.Report;
 import com.ecobank.soole.payload.auth.AccountDTO;
 import com.ecobank.soole.payload.auth.AccountVerifiedViewDTO;
 import com.ecobank.soole.payload.auth.AccountViewDTO;
@@ -44,6 +45,7 @@ import com.ecobank.soole.payload.auth.UserLoginDTO;
 import com.ecobank.soole.payload.auth.VerifiedDTO;
 import com.ecobank.soole.services.AccountService;
 import com.ecobank.soole.services.EmailService;
+import com.ecobank.soole.services.ReportService;
 import com.ecobank.soole.services.TokenService;
 import com.ecobank.soole.util.constants.AccountError;
 import com.ecobank.soole.util.constants.AccountSuccess;
@@ -77,6 +79,9 @@ public class AuthController {
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    private ReportService reportService;
+
     @Value("${site.domain}")
     private String siteDomain;
 
@@ -96,6 +101,13 @@ public class AuthController {
 
             Optional<Account> optionalAccount = accountService.findByEmail(userLogin.getEmail());
             Account account = optionalAccount.get();
+            Report report = new Report();
+            report.setFullname(account.getFullName());
+            report.setEmail(account.getEmail());
+            report.setActivity("user logged in");
+            report.setDepartment(account.getDepartment());
+            report.setDate(LocalDateTime.now());
+            reportService.save(report);
             return ResponseEntity
                     .ok(new TokenViewDTO(tokenService.generateToken(authentication), account.getAuthorities(),
                             account.getLevel(), account.getFirstName(), account.getLastName(), account.getUsername()));
@@ -123,6 +135,14 @@ public class AuthController {
             account.setLastName(accountDTO.getLastName());
             account.setUsername(accountDTO.getUsername());
             accountService.save(account);
+            Report report = new Report();
+            report.setFullname(account.getFullName());
+            report.setEmail(account.getEmail());
+            String activity = "User onboarded by: ";
+            report.setActivity(activity.concat(account.getFullName()));
+            report.setDepartment(account.getDepartment());
+            report.setDate(LocalDateTime.now());
+            reportService.save(report);
             String welcomeMessage = "Welcome to SOOLE APP";
             EmailDetailsWelcome details = new EmailDetailsWelcome(account.getEmail(), welcomeMessage,
                     "Soole just testing", account.getFirstName());
@@ -224,8 +244,7 @@ public class AuthController {
             @RequestParam(required = false, name = "per_page", defaultValue = "2") String per_page,
             @RequestParam(required = false, name = "page", defaultValue = "1") String page,
             @RequestParam(required = false, name = "name", defaultValue = "") String name,
-            @RequestParam(required = false, name = "authorities", defaultValue = "") String authorities
-            ) {
+            @RequestParam(required = false, name = "authorities", defaultValue = "") String authorities) {
         Page<Account> accountsOnPage = accountService.findAccounts(Integer.parseInt(page) - 1,
                 Integer.parseInt(per_page), sort_by, name, authorities);
         List<Account> accountList = accountsOnPage.getContent();
@@ -297,6 +316,14 @@ public class AuthController {
             account.setToken(resetToken);
             account.setPassswordResetTokenExpiry(LocalDateTime.now().plusMinutes(passwordTokenTimeout));
             accountService.save(account);
+            Report report = new Report();
+            report.setFullname(account.getFullName());
+            report.setEmail(account.getEmail());
+            String activity = "Password forgotten by: ";
+            report.setActivity(activity.concat(account.getFullName()));
+            report.setDepartment(account.getDepartment());
+            report.setDate(LocalDateTime.now());
+            reportService.save(report);
             String resetMessage = "This is the reset password link: " + siteDomain + "change-password?token="
                     + resetToken;
             EmailDetails details = new EmailDetails(account.getEmail(), resetMessage,
@@ -332,6 +359,14 @@ public class AuthController {
             accountByid.setPassword_hash(payloadDTO.getPassword());
             accountByid.setToken("");
             accountService.save(accountByid);
+            Report report = new Report();
+            report.setFullname(account.getFullName());
+            report.setEmail(account.getEmail());
+            String activity = "Password changed by: ";
+            report.setActivity(activity.concat(account.getFullName()));
+            report.setDepartment(account.getDepartment());
+            report.setDate(LocalDateTime.now());
+            reportService.save(report);
             return new ResponseEntity<>("Password reset successfully!!!", HttpStatus.OK);
         } else {
             return new ResponseEntity<>("Token Expired!!", HttpStatus.EXPECTATION_FAILED);
@@ -350,6 +385,14 @@ public class AuthController {
         Account account = optionalAccount.get();
         account.setPassword_hash(passwordDTO.getPassword());
         accountService.save(account);
+        Report report = new Report();
+        report.setFullname(account.getFullName());
+        report.setEmail(account.getEmail());
+        String activity = "Password updated by: ";
+        report.setActivity(activity.concat(account.getFullName()));
+        report.setDepartment(account.getDepartment());
+        report.setDate(LocalDateTime.now());
+        reportService.save(report);
         ProfileDTO profileDTO = new ProfileDTO(account.getId(), account.getEmail(), account.getAuthorities(),
                 account.getLevel(), account.getTelephone());
 
@@ -382,6 +425,14 @@ public class AuthController {
             account.setDepartment(accountDTO.getDepartment());
             account.setStatus(accountDTO.getStatus());
             accountService.save(account);
+            Report report = new Report();
+            report.setFullname(account.getFullName());
+            report.setEmail(account.getEmail());
+            String activity = "Profile updated by: ";
+            report.setActivity(activity.concat(account.getFullName()));
+            report.setDepartment(account.getDepartment());
+            report.setDate(LocalDateTime.now());
+            reportService.save(report);
             UpdateAccountViewDTO accountViewDTO = new UpdateAccountViewDTO(account.getId(), account.getEmail(),
                     account.getLevel(),
                     account.getTelephone(), account.getFirstName(), account.getLastName(), account.getUsername(),
@@ -426,6 +477,15 @@ public class AuthController {
                     account.getAffiliate(),
                     account.getStaff_id());
 
+            Report report = new Report();
+            report.setFullname(account.getFullName());
+            report.setEmail(account.getEmail());
+            String activity = "Authorities upgraded for: ";
+            report.setActivity(activity.concat(account.getFullName()));
+            report.setDepartment(account.getDepartment());
+            report.setDate(LocalDateTime.now());
+            reportService.save(report);
+
             return ResponseEntity.ok(accountViewDTO);
         }
         return new ResponseEntity<>(new AccountViewDTO(), HttpStatus.BAD_REQUEST);
@@ -448,6 +508,15 @@ public class AuthController {
             AccountVerifiedViewDTO accountVerifiedViewDTO = new AccountVerifiedViewDTO(account.getId(),
                     account.getEmail(), account.getAuthorities(), account.getCreatedAt(), account.getLevel(),
                     account.getTelephone(), account.getVerified());
+
+                    Report report = new Report();
+            report.setFullname(account.getFullName());
+            report.setEmail(account.getEmail());
+            String activity = "approval for: ";
+            report.setActivity(activity.concat(account.getFullName()).concat(" is ").concat(account.getVerified()));
+            report.setDepartment(account.getDepartment());
+            report.setDate(LocalDateTime.now());
+            reportService.save(report);
 
             return ResponseEntity.ok(accountVerifiedViewDTO);
         }

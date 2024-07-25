@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ecobank.soole.models.Account;
 import com.ecobank.soole.models.Booking;
 import com.ecobank.soole.models.Bus;
+import com.ecobank.soole.models.Report;
 import com.ecobank.soole.payload.booking.BookingPayloadDTO;
 import com.ecobank.soole.payload.booking.BookingViewDTO;
 import com.ecobank.soole.payload.booking.BookingViewListDTO;
@@ -29,6 +30,7 @@ import com.ecobank.soole.repositories.AccountRepository;
 import com.ecobank.soole.repositories.BusRepository;
 import com.ecobank.soole.services.BookingService;
 import com.ecobank.soole.services.BusService;
+import com.ecobank.soole.services.ReportService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -53,6 +55,9 @@ public class BookingController {
 
     @Autowired
     private BusService busService;
+
+    @Autowired
+    private ReportService reportService;
 
     @PostMapping(value = "/bookseat", produces = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
@@ -124,6 +129,14 @@ public class BookingController {
         booking.setTime_of_departure(LocalDateTime.now());
         booking.setBoard("PENDING");
         bookingService.save(booking);
+        Report report = new Report();
+            report.setFullname(account.getFullName());
+            report.setEmail(account.getEmail());
+            String activity = "Seat booked by: ";
+            report.setActivity(activity.concat(account.getFullName()));
+            report.setDepartment(account.getDepartment());
+            report.setDate(LocalDateTime.now());
+            reportService.save(report);
 
         System.out.println(bookingDTO);
         BookingViewDTO bookingViewDTO = new BookingViewDTO();
@@ -135,6 +148,8 @@ public class BookingController {
         bookingViewDTO.setDrop_off_point(booking.getDrop_off_point());
         bookingViewDTO.setTime_of_departure(booking.getTime_of_departure());
         bookingViewDTO.setBoard("PENDING");
+        bookingViewDTO.setBooker(booking.getBooker());
+        bookingViewDTO.setId(booking.getId());
         
 
         return new ResponseEntity<>(bookingViewDTO, HttpStatus.CREATED);
@@ -185,6 +200,14 @@ public class BookingController {
         Booking foundBooking = optionalBooking.get();
         foundBooking.setBoard("BOARDED SUCCESSFULLY");
         bookingService.save(foundBooking);
+        Report report = new Report();
+        report.setFullname(foundBooking.getBooker());
+        report.setEmail("Bus captain email");
+        String activity = "Seat status changed to: ";
+        report.setActivity(activity.concat("boarded successfully"));
+        report.setDepartment("Bus Captains department");
+        report.setDate(LocalDateTime.now());
+        reportService.save(report);
         return new ResponseEntity<String>("USER BOARDED SUCCESSFULLY", HttpStatus.OK);
     }
 }
