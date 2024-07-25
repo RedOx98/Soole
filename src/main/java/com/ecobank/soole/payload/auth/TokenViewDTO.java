@@ -10,6 +10,8 @@ import lombok.Setter;
 public class TokenViewDTO {
     private String token;
 
+    private Long id;
+
     private String authorities;
 
     private String level;

@@ -11,10 +11,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.ecobank.soole.mapper.BusMapper;
+import com.ecobank.soole.models.Account;
 import com.ecobank.soole.models.Bus;
 import com.ecobank.soole.payload.bus.BusFetchRequestDTO;
 import com.ecobank.soole.payload.bus.CreateBusDTO;
 import com.ecobank.soole.payload.bus.CreateRouteDTO;
+import com.ecobank.soole.repositories.AccountRepository;
 import com.ecobank.soole.repositories.BusRepository;
 import com.ecobank.soole.services.BusService;
 import com.ecobank.soole.util.constants.BusEnum;
@@ -33,6 +35,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class BusServiceImpl implements BusService {
     private final BusRepository busRepository;
+    private final AccountRepository accountRepository;
 
     @Override
     public void createBus(CreateBusDTO createBusDTO) {
@@ -56,8 +59,15 @@ public class BusServiceImpl implements BusService {
         // Fetch bus
         Bus bus = busRepository.findById(Long.valueOf(busId))
                 .orElseThrow(() -> new ResourceNotFoundException("Bus not found with Id: " + busId));
-        bus = BusMapper.MapRouteToBus(createRouteDTO, bus);
+
+        // Fetch new captain
+        Account captain = accountRepository.findById(Long.valueOf(createRouteDTO.getCaptainId()))
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Captain not found with Id: " + createRouteDTO.getCaptainId()));
+
+        bus = BusMapper.MapRouteToBus( bus, captain);
         try {
+            // Save bus details
             busRepository.save(bus);
         } catch (Exception e) {
             throw new RuntimeException("Error saving bus");
@@ -152,11 +162,5 @@ public class BusServiceImpl implements BusService {
     public Optional<Bus> fetchById(Long id) {
         Optional<Bus> optionalBus = busRepository.findById(id);
         return optionalBus;
-    }
-
-    // @Override
-    public void updateBusDetails(CreateBusDTO createBusDTO, String busId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updateBusDetails'");
     }
 }

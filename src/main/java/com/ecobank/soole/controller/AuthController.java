@@ -109,7 +109,7 @@ public class AuthController {
             report.setDate(LocalDateTime.now());
             reportService.save(report);
             return ResponseEntity
-                    .ok(new TokenViewDTO(tokenService.generateToken(authentication), account.getAuthorities(),
+                    .ok(new TokenViewDTO(tokenService.generateToken(authentication),account.getId(), account.getAuthorities(),
                             account.getLevel(), account.getFirstName(), account.getLastName(), account.getUsername()));
         } catch (Exception e) {
             log.debug(AccountError.TOKEN_GENERATION_ERROR.toString() + ": " + e.getMessage());

@@ -33,7 +33,13 @@ public class CreateBusDTO {
     @NotBlank(message = "Bus color must not be blank")
     private String busColor;
 
-//    @NotBlank(message = "Route name must not be blank")
-//    @Size(min = 3, message = "Route name must be at least 3 characters long")
+    @NotBlank(message = "Driver name must not be blank")
+    private String driverName;
+
+    @NotBlank(message = "Driver phone number must not be blank")
+    private String driverPhoneNumber;
+
+   @NotBlank(message = "Route name must not be blank")
+   @Size(min = 3, message = "Route name must be at least 3 characters long")
     private String routeName;
 }
