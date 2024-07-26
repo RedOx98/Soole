@@ -5,5 +5,6 @@ public enum Authority {
     ADMIN,
     USER,
     SUPERUSER,
-    DRIVER
+    DRIVER,
+    EBS
 }

@@ -173,13 +173,15 @@ public class BookingController {
         LocalDate today = LocalDate.now();
         for(Booking bookings: bookingService.findByBusIdAndDate(busId, today)){
             busBookings.add(new BookingViewListDTO(
+                bookings.getId(),
                 bookings.getTime_of_departure(),
                 bookings.getCreatedAt(),
                 bookings.getTake_off_point(),
                 bookings.getDrop_off_point(),
                 bookings.getStatus(),
                 bookings.getRoute(),
-                bookings.getBoard()
+                bookings.getBoard(),
+                bookings.getBooker()
             ));
         };
         System.out.println(busBookings);
