@@ -2,6 +2,8 @@ package com.ecobank.soole.payload.booking;
 
 import java.time.LocalDateTime;
 
+import com.ecobank.soole.models.Account;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,10 +14,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BookingViewListDTO {
-    
-
     private Long id;
-    
+
     private LocalDateTime time_of_departure;
 
     private LocalDateTime createdAt;
@@ -30,5 +30,5 @@ public class BookingViewListDTO {
 
     private String board;
 
-    private String booker;
+    private Account user;
 }

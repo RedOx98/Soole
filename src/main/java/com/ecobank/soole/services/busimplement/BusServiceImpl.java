@@ -60,12 +60,17 @@ public class BusServiceImpl implements BusService {
         Bus bus = busRepository.findById(Long.valueOf(busId))
                 .orElseThrow(() -> new ResourceNotFoundException("Bus not found with Id: " + busId));
 
-        // Fetch new captain
-        Account captain = accountRepository.findById(Long.valueOf(createRouteDTO.getCaptainId()))
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Captain not found with Id: " + createRouteDTO.getCaptainId()));
+        // Assign captain | null
+        Account captain = null;
 
-        bus = BusMapper.MapRouteToBus( bus, captain);
+        if (createRouteDTO.getCaptainId() != null) {
+            captain = accountRepository.findById(Long.valueOf(createRouteDTO.getCaptainId()))
+                    .orElseThrow(() -> new ResourceNotFoundException(
+                            "Captain not found with Id: " + createRouteDTO.getCaptainId()));
+        }
+
+        bus = BusMapper.MapRouteToBus(bus, captain);
+
         try {
             // Save bus details
             busRepository.save(bus);
@@ -125,9 +130,12 @@ public class BusServiceImpl implements BusService {
         // Fetch bus
         Bus bus = busRepository.findById(Long.valueOf(busId))
                 .orElseThrow(() -> new ResourceNotFoundException("Bus not found with Id: " + busId));
+        
+            
 
         // Update specific fields based on provided data in the map
         updateData.forEach((key, value) -> {
+            System.out.println(key + " " + value);
             switch (key) {
                 case "busNumber":
                     bus.setBusNumber((String) value);
@@ -146,6 +154,12 @@ public class BusServiceImpl implements BusService {
                     break;
                 case "routeName":
                     bus.setRouteName((String) value);
+                    break;
+                case "driverName":
+                    bus.setDriverName((String) value);
+                    break;
+                case "driverPhoneNumber":
+                    bus.setDriverPhoneNumber((String) value);
                     break;
                 default:
                     // Handle unsupported fields
