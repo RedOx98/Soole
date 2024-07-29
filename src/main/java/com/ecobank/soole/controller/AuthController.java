@@ -448,7 +448,6 @@ public class AuthController {
 
         } else {
             return ResponseEntity.badRequest().body(null);
-
         }
 
     }
