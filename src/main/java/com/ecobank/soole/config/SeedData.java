@@ -216,6 +216,7 @@ public class SeedData implements CommandLineRunner {
         account07.setUsername("johndoe");
         account07.setRoute("BERGER");
         account07.setDepartment("Technology");
+        account07.setAuthorities(Authority.USER.toString());
         account07.setAffiliate("ENG");
         account07.setStaff_id("10929");
         account07.setStatus("activated");
@@ -231,6 +232,7 @@ public class SeedData implements CommandLineRunner {
         account08.setUsername("danieljames");
         account08.setRoute("AJAH-LAKOWE");
         account08.setDepartment("Technology");
+        account08.setAuthorities(Authority.USER.toString());
         account08.setAffiliate("ENG");
         account08.setStaff_id("10930");
         account08.setStatus("activated");
@@ -246,13 +248,14 @@ public class SeedData implements CommandLineRunner {
         account09.setUsername("aubreygraham");
         account09.setRoute("IKORODU");
         account09.setDepartment("Technology");
+        account09.setAuthorities(Authority.USER.toString());
         account09.setAffiliate("ENG");
         account09.setStaff_id("10931");
         account09.setStatus("activated");
         account09.setVerified("APPROVED");
         accountService.save(account09);
 
-        account10.setEmail("user4@ecobank.com");
+        account10.setEmail("ebs@gmail.com");
         account10.setPassword_hash("password");
         account10.setLevel("Executive Assistant");
         account10.setTelephone("09036123576");
@@ -261,6 +264,7 @@ public class SeedData implements CommandLineRunner {
         account10.setUsername("rosesilva");
         account10.setRoute("OSHODI");
         account10.setDepartment("Technology");
+        account10.setAuthorities(Authority.EBS.toString());
         account10.setAffiliate("ENG");
         account10.setStaff_id("10932");
         account10.setStatus("activated");
@@ -276,6 +280,7 @@ public class SeedData implements CommandLineRunner {
         account11.setUsername("estherjames");
         account11.setRoute("IYANA-IPAJA");
         account11.setDepartment("Technology");
+        account11.setAuthorities(Authority.USER.toString());
         account11.setAffiliate("ENG");
         account11.setStaff_id("10933");
         account11.setStatus("activated");
@@ -289,6 +294,7 @@ public class SeedData implements CommandLineRunner {
         account12.setFirstName("benjamin");
         account12.setLastName("button");
         account12.setUsername("benjaminbutton");
+        account12.setAuthorities(Authority.USER.toString());
         account12.setRoute("AJAH-LAKOWE");
         account12.setDepartment("Technology");
         account12.setAffiliate("ENG");

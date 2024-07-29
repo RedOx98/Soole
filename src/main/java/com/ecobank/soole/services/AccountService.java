@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.tomcat.util.http.fileupload.impl.InvalidContentTypeException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -49,7 +50,8 @@ public class AccountService implements UserDetailsService {
             account.setAuthorities(Authority.USER.toString());
         }
         if (account.getVerified() == null) {
-            account.setVerified("true");
+            // account.setVerified("true");
+            account.setVerified("PENDING");
         }
         if (account.getCreatedAt() == null) {
             account.setCreatedAt(LocalDateTime.now());

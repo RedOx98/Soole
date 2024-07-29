@@ -85,6 +85,8 @@ public class BusController {
     @Operation(summary = "Admin Update bus")
     @SecurityRequirement(name = "soole-demo-api")
     public ResponseEntity<ResponseDTO> updateBusDetails(@RequestParam String busId, @RequestBody Map<String, Object> updateData) {
+        System.out.println("Update data");
+        System.out.println(updateData);
         busService.updateBusDetails(busId, updateData);
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseDTO(HttpStatus.OK, "Bus details updated successfully"));
     }

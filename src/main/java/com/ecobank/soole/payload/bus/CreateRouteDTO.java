@@ -9,7 +9,7 @@ import lombok.ToString;
 @Setter
 @ToString
 public class CreateRouteDTO {
-    @NotBlank(message = "Captain Id must not be blank")
+    // @NotBlank(message = "Captain Id must not be blank")
     private String captainId;
 
     // @NotBlank(message = "Route name must not be blank")

@@ -7,6 +7,8 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.Collections;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -281,7 +283,7 @@ public class AuthController {
             }
         }
         System.out.println(accountsOnPage);
-        return null;
+        return ResponseEntity.ok(Collections.emptyList());
     }
 
     @GetMapping(value = "/profile", produces = "application/json")
@@ -500,6 +502,8 @@ public class AuthController {
     @SecurityRequirement(name = "soole-demo-api")
     public ResponseEntity<AccountVerifiedViewDTO> updateVerified(@Valid @RequestBody VerifiedDTO verifiedDTO,
             @PathVariable Long userId) {
+        System.out.println("Verified service");
+        System.out.println(verifiedDTO.getVerified());
         Optional<Account> optionalAccount = accountService.findById(userId);
         if (optionalAccount.isPresent()) {
             Account account = optionalAccount.get();

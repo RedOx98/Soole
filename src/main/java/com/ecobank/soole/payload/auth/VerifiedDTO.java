@@ -13,6 +13,6 @@ import lombok.Setter;
 public class VerifiedDTO {
 
     @NotBlank(message = "can not be blank")
-    @Schema(description = "Verified", example = "false", requiredMode = RequiredMode.REQUIRED, defaultValue = "false")
+    @Schema(description = "Verified", example = "APPROVED", requiredMode = RequiredMode.REQUIRED, defaultValue = "PENDING")
     private String verified;
 }

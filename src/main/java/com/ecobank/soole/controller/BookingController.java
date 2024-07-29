@@ -181,7 +181,7 @@ public class BookingController {
                 bookings.getStatus(),
                 bookings.getRoute(),
                 bookings.getBoard(),
-                bookings.getBooker()
+                bookings.getAccount()
             ));
         };
         System.out.println(busBookings);
