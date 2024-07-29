@@ -94,35 +94,34 @@ public class SecurityConfig {
             authorizeRequests
             // .requestMatchers("/**").permitAll()
             .requestMatchers("/api/v1/auth/token").permitAll()
-            .requestMatchers("/api/v1/auth/test").hasAuthority("SCOPE_ADMIN")
-            .requestMatchers("/api/v1/auth/users").hasAnyAuthority("SCOPE_ADMIN", "SCOPE_EBS")
-            .requestMatchers("/api/v1/auth/stats").hasAnyAuthority("SCOPE_ADMIN", "SCOPE_EBS")
-            .requestMatchers("/api/v1/auth/userspaginate").hasAnyAuthority("SCOPE_ADMIN", "SCOPE_EBS")
+            .requestMatchers("/api/v1/auth/test").hasAnyAuthority("SCOPE_ADMIN", "SCOPE_SUPERUSER")
+            .requestMatchers("/api/v1/auth/users").hasAnyAuthority("SCOPE_ADMIN", "SCOPE_EBS", "SCOPE_SUPERUSER")
+            .requestMatchers("/api/v1/auth/stats").hasAnyAuthority("SCOPE_ADMIN", "SCOPE_EBS", "SCOPE_SUPERUSER")
+            .requestMatchers("/api/v1/auth/userspaginate").hasAnyAuthority("SCOPE_ADMIN", "SCOPE_EBS", "SCOPE_SUPERUSER")
             .requestMatchers("/api/v1/auth/users/add").permitAll()
             .requestMatchers("/api/v1/auth/profile").authenticated()
             .requestMatchers("/api/v1/auth/users/reset-password").permitAll()
             .requestMatchers("/api/v1/auth/users/change-password/**").permitAll()
             .requestMatchers("/api/v1/auth/profile/delete").authenticated()
             .requestMatchers("/api/v1/auth/profile/update-password").authenticated()
-            .requestMatchers("/api/v1/auth/profile/{userId}/update-profile").hasAuthority("SCOPE_ADMIN")
-            .requestMatchers("/api/v1/auth/users/{userId}/update-authorities").hasAuthority("SCOPE_ADMIN")
-            .requestMatchers("/api/v1/auth/users/{userId}/update-verified").hasAuthority("SCOPE_ADMIN")
-            .requestMatchers("/api/v1/bus/add").hasAnyAuthority("SCOPE_ADMIN", "SCOPE_EBS")
+            .requestMatchers("/api/v1/auth/profile/{userId}/update-profile").hasAnyAuthority("SCOPE_ADMIN", "SCOPE_SUPERUSER")
+            .requestMatchers("/api/v1/auth/users/{userId}/update-authorities").hasAnyAuthority("SCOPE_ADMIN", "SCOPE_SUPERUSER")
+            .requestMatchers("/api/v1/auth/users/{userId}/update-verified").hasAnyAuthority("SCOPE_ADMIN", "SCOPE_SUPERUSER")
+            .requestMatchers("/api/v1/bus/add").hasAnyAuthority("SCOPE_ADMIN", "SCOPE_EBS", "SCOPE_SUPERUSER")
             .requestMatchers("/api/v1/bus/list").authenticated()
-            .requestMatchers("/api/v1/bus/delete").hasAnyAuthority("SCOPE_ADMIN", "SCOPE_EBS")
-            .requestMatchers("/api/v1/bus/update").hasAnyAuthority("SCOPE_ADMIN", "SCOPE_EBS")
-            .requestMatchers("/api/v1/bus/route/add").hasAnyAuthority("SCOPE_ADMIN", "SCOPE_EBS")
-            .requestMatchers("/api/v1/bus/route/update").hasAnyAuthority("SCOPE_ADMIN", "SCOPE_EBS")
-            .requestMatchers("/api/v1/bstp/add").hasAnyAuthority("SCOPE_ADMIN", "SCOPE_EBS")
-            .requestMatchers("/api/v1/bstp/delete").hasAnyAuthority("SCOPE_ADMIN", "SCOPE_EBS")
-            .requestMatchers("/api/v1/bstp/update").hasAnyAuthority("SCOPE_ADMIN", "SCOPE_EBS")
-            .requestMatchers("/api/v1/audit/reportspaginate").hasAuthority("SCOPE_ADMIN")
+            .requestMatchers("/api/v1/bus/delete").hasAnyAuthority("SCOPE_ADMIN", "SCOPE_EBS", "SCOPE_SUPERUSER")
+            .requestMatchers("/api/v1/bus/update").hasAnyAuthority("SCOPE_ADMIN", "SCOPE_EBS", "SCOPE_SUPERUSER")
+            .requestMatchers("/api/v1/bus/route/add").hasAnyAuthority("SCOPE_ADMIN", "SCOPE_EBS", "SCOPE_SUPERUSER")
+            .requestMatchers("/api/v1/bus/route/update").hasAnyAuthority("SCOPE_ADMIN", "SCOPE_EBS", "SCOPE_SUPERUSER")
+            .requestMatchers("/api/v1/bstp/add").hasAnyAuthority("SCOPE_ADMIN", "SCOPE_EBS", "SCOPE_SUPERUSER")
+            .requestMatchers("/api/v1/bstp/delete").hasAnyAuthority("SCOPE_ADMIN", "SCOPE_EBS", "SCOPE_SUPERUSER")
+            .requestMatchers("/api/v1/bstp/update").hasAnyAuthority("SCOPE_ADMIN", "SCOPE_EBS", "SCOPE_SUPERUSER")
+            .requestMatchers("/api/v1/audit/reportspaginate").hasAnyAuthority("SCOPE_ADMIN", "SCOPE_SUPERUSER")
             .requestMatchers("/api/v1/booking/bookseat").authenticated()
             .requestMatchers("/api/v1/booking/{busId}/bookings").hasAuthority("SCOPE_CAPTAIN")
             .requestMatchers("/api/v1/booking/{bookingId}/update").hasAuthority("SCOPE_CAPTAIN")
             .requestMatchers("/swagger-ui/**").permitAll()
             .requestMatchers("/v3/api-docs/**").permitAll()
-
         )
         .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
             .sessionManagement(session ->
@@ -137,8 +136,6 @@ public class SecurityConfig {
         http.headers(header->
         header.frameOptions().disable()
         );
-
-
         return http.build();
     }
 }
