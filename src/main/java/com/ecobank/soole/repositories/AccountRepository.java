@@ -18,12 +18,14 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     Optional<Account> findByToken(String token);
 
     @Query("SELECT a FROM Account a WHERE " +
-       "(:name IS NULL OR a.firstName LIKE %:name% OR a.lastName LIKE %:name%) " +
-       "AND (:authorities IS NULL OR a.authorities LIKE %:authorities%)")
-Page<Account> findByNameAndDate(
-    @Param("name") String name,
-    @Param("authorities") String authorities,
-    Pageable pageable
-);
+           "(:name IS NULL OR a.firstName LIKE CONCAT('%', :name, '%') OR a.lastName LIKE CONCAT('%', :name, '%')) " +
+           "AND (:status IS NULL OR a.status LIKE CONCAT('%', :status, '%')) " +
+           "AND (:authorities IS NULL OR a.authorities LIKE CONCAT('%', :authorities, '%'))")
+    Page<Account> findByNameAndDate(
+        @Param("name") String name,
+        @Param("status") String status,
+        @Param("authorities") String authorities,
+        Pageable pageable
+    );
 
 }

@@ -1,10 +1,7 @@
 package com.ecobank.soole.payload.auth;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.media.Schema.RequiredMode;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import java.time.LocalDateTime;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,13 +9,17 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-public class UpdateAccountViewDTO {
-
+@AllArgsConstructor
+public class AccountViewStatusDTO {
+    
     private Long id;
 
     private String email;
+
+    private String authorities;
+
+    private LocalDateTime createdAt;
 
     private String level;
 
@@ -38,9 +39,7 @@ public class UpdateAccountViewDTO {
 
     private String affiliate;
 
-    private String status;
-
     private String staff_id;
-    
-    private String special;
+
+    private String status;
 }

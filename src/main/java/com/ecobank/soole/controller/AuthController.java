@@ -32,6 +32,7 @@ import com.ecobank.soole.models.Report;
 import com.ecobank.soole.payload.auth.AccountDTO;
 import com.ecobank.soole.payload.auth.AccountVerifiedViewDTO;
 import com.ecobank.soole.payload.auth.AccountViewDTO;
+import com.ecobank.soole.payload.auth.AccountViewStatusDTO;
 import com.ecobank.soole.payload.auth.AuthoritiesDTO;
 import com.ecobank.soole.payload.auth.ChangePasswordPayloadDTO;
 import com.ecobank.soole.payload.auth.PasswordDTO;
@@ -239,14 +240,16 @@ public class AuthController {
     @ApiResponse(responseCode = "403", description = "Token error")
     @Operation(summary = "List users in paginated format")
     @SecurityRequirement(name = "soole-demo-api")
-    public ResponseEntity<List<AccountViewDTO>> allUsers(
+    public ResponseEntity<List<AccountViewStatusDTO>> allUsers(
             @RequestParam(required = false, name = "sort_by", defaultValue = "createdAt") String sort_by,
             @RequestParam(required = false, name = "per_page", defaultValue = "2") String per_page,
             @RequestParam(required = false, name = "page", defaultValue = "1") String page,
             @RequestParam(required = false, name = "name", defaultValue = "") String name,
-            @RequestParam(required = false, name = "authorities", defaultValue = "") String authorities) {
+            @RequestParam(required = false, name = "status", defaultValue = "pending") String status,
+            @RequestParam(required = false, name = "authorities", defaultValue = "") String authorities
+            ) {
         Page<Account> accountsOnPage = accountService.findAccounts(Integer.parseInt(page) - 1,
-                Integer.parseInt(per_page), sort_by, name, authorities);
+                Integer.parseInt(per_page), sort_by, name, status, authorities);
         List<Account> accountList = accountsOnPage.getContent();
         int totalPages = accountsOnPage.getTotalPages();
         List<Integer> pages = new ArrayList<>();
@@ -261,7 +264,7 @@ public class AuthController {
                     // active = "active";
                 }
                 // Convert Account to AccountViewDTO
-                List<AccountViewDTO> accounts = accountList.stream().map(account -> new AccountViewDTO(
+                List<AccountViewStatusDTO> accounts = accountList.stream().map(account -> new AccountViewStatusDTO(
                         account.getId(),
                         account.getEmail(),
                         account.getAuthorities(),
@@ -275,7 +278,8 @@ public class AuthController {
                         account.getRoute(),
                         account.getDepartment(),
                         account.getAffiliate(),
-                        account.getStaff_id())).collect(Collectors.toList());
+                        account.getStaff_id(),
+                        account.getStatus())).collect(Collectors.toList());
                 System.out.println(accounts);
                 return ResponseEntity.ok(accounts);
             }
@@ -296,7 +300,7 @@ public class AuthController {
         if (optionalAccount.isPresent()) {
             Account account = optionalAccount.get();
             ProfileDTO profileDTO = new ProfileDTO(account.getId(), account.getEmail(), account.getAuthorities(),
-                    account.getLevel(), account.getTelephone());
+                    account.getLevel(), account.getTelephone(), account.getSpecial());
             return ResponseEntity.ok(profileDTO);
         }
         return new ResponseEntity<ProfileDTO>(new ProfileDTO(), HttpStatus.BAD_REQUEST);
@@ -394,7 +398,7 @@ public class AuthController {
         report.setDate(LocalDateTime.now());
         reportService.save(report);
         ProfileDTO profileDTO = new ProfileDTO(account.getId(), account.getEmail(), account.getAuthorities(),
-                account.getLevel(), account.getTelephone());
+                account.getLevel(), account.getTelephone(), account.getSpecial());
 
         return profileDTO;
     }
@@ -424,7 +428,9 @@ public class AuthController {
             account.setRoute(accountDTO.getRoute());
             account.setDepartment(accountDTO.getDepartment());
             account.setStatus(accountDTO.getStatus());
+            account.setSpecial(accountDTO.getSpecial());
             accountService.save(account);
+            
             Report report = new Report();
             report.setFullname(account.getFullName());
             report.setEmail(account.getEmail());
@@ -437,7 +443,7 @@ public class AuthController {
                     account.getLevel(),
                     account.getTelephone(), account.getFirstName(), account.getLastName(), account.getUsername(),
                     account.getVerified(), account.getRoute(), account.getDepartment(), account.getAffiliate(),
-                    account.getStatus(), account.getStaff_id());
+                    account.getStatus(), account.getStaff_id(), account.getSpecial());
             return ResponseEntity.ok(accountViewDTO);
 
         } else {

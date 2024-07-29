@@ -169,7 +169,7 @@ public class SeedData implements CommandLineRunner {
         account04.setAffiliate("ENG");
         account04.setStaff_id("12928");
         account04.setStatus("activated");
-        account04.setVerified("pending");
+        account04.setVerified("PENDING");
         accountService.save(account04);
         // accountService.mapToBus(account04, bus01.getBusId());
 
@@ -186,7 +186,7 @@ public class SeedData implements CommandLineRunner {
         account05.setAffiliate("ENG");
         account05.setStaff_id("13928");
         account05.setStatus("deactivated");
-        account05.setVerified("rejected");
+        account05.setVerified("REJECTED");
         accountService.save(account05);
         // accountService.mapToBus(account05, bus05.getBusId());
 
@@ -203,7 +203,7 @@ public class SeedData implements CommandLineRunner {
         account06.setAffiliate("ENG");
         account06.setStaff_id("12328");
         account06.setStatus("activated");
-        account06.setVerified("accepted");
+        account06.setVerified("APPROVED");
         accountService.save(account06);
         // accountService.mapToBus(account05, bus05.getBusId());
 

@@ -20,4 +20,6 @@ public class ProfileDTO {
     private String level;
 
     private String telephone;
+
+    private String Special;
 }

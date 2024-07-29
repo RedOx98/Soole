@@ -25,6 +25,7 @@ import com.ecobank.soole.models.Bus;
 import com.ecobank.soole.repositories.AccountRepository;
 import com.ecobank.soole.repositories.BusRepository;
 import com.ecobank.soole.util.constants.Authority;
+import com.ecobank.soole.util.constants.BookingEnum.status;
 
 @Service
 // @RequiredArgsConstructor
@@ -49,7 +50,7 @@ public class AccountService implements UserDetailsService {
             account.setAuthorities(Authority.USER.toString());
         }
         if (account.getVerified() == null) {
-            account.setVerified("true");
+            account.setVerified("PENDING");
         }
         if (account.getCreatedAt() == null) {
             account.setCreatedAt(LocalDateTime.now());
@@ -88,9 +89,10 @@ public class AccountService implements UserDetailsService {
         return accountRepository.save(account);
     }
 
-    public Page<Account> findAccounts(int page, int pageSize, String sortBy, String name, String authorities) {
+    public Page<Account> findAccounts(int page, int pageSize, String sortBy, String name, String status, String authorities) {
+        
         Pageable pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.ASC, sortBy));
-        return accountRepository.findByNameAndDate(name, authorities, pageable);
+        return accountRepository.findByNameAndDate(name, status, authorities, pageable);
     }
 
     public List<Account> findAll() {

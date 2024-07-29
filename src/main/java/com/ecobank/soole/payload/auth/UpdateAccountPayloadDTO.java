@@ -56,6 +56,9 @@ public class UpdateAccountPayloadDTO {
     private String status;
 
     @NotBlank
+    private String special;
+
+    @NotBlank
     @Size(min = 5, max = 7)
     @Schema(description = "Staff ID", example = "10928", 
     requiredMode = RequiredMode.REQUIRED, minLength = 5, maxLength = 7)
