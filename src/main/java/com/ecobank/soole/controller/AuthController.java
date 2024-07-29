@@ -398,7 +398,7 @@ public class AuthController {
         report.setDate(LocalDateTime.now());
         reportService.save(report);
         ProfileDTO profileDTO = new ProfileDTO(account.getId(), account.getEmail(), account.getAuthorities(),
-                account.getLevel(), account.getTelephone(), account.getSpecial());
+            account.getLevel(), account.getTelephone(), account.getSpecial());
 
         return profileDTO;
     }
